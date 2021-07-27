@@ -1,0 +1,6 @@
+# github.com/gofrs/uuid v4.0.0+incompatible
+## explicit
+github.com/gofrs/uuid
+# github.com/gorilla/mux v1.8.0
+## explicit
+github.com/gorilla/mux
