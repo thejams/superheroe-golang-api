@@ -46,7 +46,7 @@ func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
 
 // AddSuperHero let us add a new super hero
 func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
-	var newHero entity.Superheroe
+	var newHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		HandleError(res, "Invalid data in request", http.StatusBadRequest)
@@ -90,7 +90,7 @@ func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 
 // UpdateSuperhero updates a super hero information
 func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request) {
-	var updatedHero entity.Superheroe
+	var updatedHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		HandleError(res, "Invalid Request Data", http.StatusBadRequest)

@@ -10,17 +10,17 @@ type BadRequestError struct {
 	Message string
 }
 
-func (i *BadRequestError) Error() string {
-	return fmt.Sprintf("BadRequest: %v", i.Message)
-}
-
 //NotFoundError
 type NotFoundError struct {
 	Message string
 }
 
-func (i *NotFoundError) Error() string {
-	return fmt.Sprintf("NotFound: %v", i.Message)
+func (e *BadRequestError) Error() string {
+	return fmt.Sprintf("BadRequest: %v", e.Message)
+}
+
+func (e *NotFoundError) Error() string {
+	return fmt.Sprintf("NotFound: %v", e.Message)
 }
 
 type ErrorWrapper struct {

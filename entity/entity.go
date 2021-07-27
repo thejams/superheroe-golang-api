@@ -1,7 +1,7 @@
 package entity
 
 // Superheroe
-type Superheroe struct {
+type Superhero struct {
 	ID    string `json:"id" validate:"omitempty"`
 	Name  string `json:"name" validate:"required"`
 	Alias string `json:"alias" validate:"required"`

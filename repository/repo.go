@@ -7,14 +7,14 @@ import (
 	"superheroe-api/superheroe-golang-api/util"
 )
 
-var superheroesList []*entity.Superheroe
+var superheroesList []*entity.Superhero
 
 //Repository main repository interface
 type Repository interface {
-	GetSuperheroes() []*entity.Superheroe
-	GetSuperheroeById(id string) (*entity.Superheroe, error)
-	AddSuperheroe(c *entity.Superheroe) *entity.Superheroe
-	EditSuperheroe(c *entity.Superheroe) (*entity.Superheroe, error)
+	GetSuperheroes() []*entity.Superhero
+	GetSuperheroeById(id string) (*entity.Superhero, error)
+	AddSuperheroe(c *entity.Superhero) *entity.Superhero
+	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)
 	DeleteSuperheroe(id string) (string, error)
 }
 
@@ -22,7 +22,7 @@ type repository struct{}
 
 //NewRepository initialice a new repository with clean data
 func NewRepository() Repository {
-	superheroesList = []*entity.Superheroe{
+	superheroesList = []*entity.Superhero{
 		{Name: "Thor", Alias: "Thor Odinson", ID: "1"},
 		{Name: "Batman", Alias: "Bruce Wayne", ID: "2"},
 		{Name: "Iron Man", Alias: "Tony Stark", ID: "3"},
@@ -33,12 +33,12 @@ func NewRepository() Repository {
 }
 
 //GetSuperheroes returns all the superheroes in the slice
-func (r *repository) GetSuperheroes() []*entity.Superheroe {
+func (r *repository) GetSuperheroes() []*entity.Superhero {
 	return superheroesList
 }
 
 //GetSuperheroeById returns a single superheroe from the slice
-func (r *repository) GetSuperheroeById(i string) (*entity.Superheroe, error) {
+func (r *repository) GetSuperheroeById(i string) (*entity.Superhero, error) {
 	for _, value := range superheroesList {
 		if value.ID == i {
 			return value, nil
@@ -48,13 +48,13 @@ func (r *repository) GetSuperheroeById(i string) (*entity.Superheroe, error) {
 }
 
 //AddSuperheroe add a new superheroe to the superheroes slice
-func (r *repository) AddSuperheroe(c *entity.Superheroe) *entity.Superheroe {
+func (r *repository) AddSuperheroe(c *entity.Superhero) *entity.Superhero {
 	superheroesList = append(superheroesList, c)
 	return c
 }
 
 //EditCharacter edit a superheroe with new information
-func (r *repository) EditSuperheroe(c *entity.Superheroe) (*entity.Superheroe, error) {
+func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error) {
 	for index, value := range superheroesList {
 		if value.ID == c.ID {
 			superheroesList = append(superheroesList[:index], superheroesList[index+1:]...)

@@ -10,10 +10,10 @@ import (
 
 //Service main interface for the service with the business logic
 type Controller interface {
-	GetAll() ([]*entity.Superheroe, error)
-	GetByID(id string) (*entity.Superheroe, error)
-	Add(c *entity.Superheroe) (*entity.Superheroe, error)
-	Edit(c *entity.Superheroe) (*entity.Superheroe, error)
+	GetAll() ([]*entity.Superhero, error)
+	GetByID(id string) (*entity.Superhero, error)
+	Add(c *entity.Superhero) (*entity.Superhero, error)
+	Edit(c *entity.Superhero) (*entity.Superhero, error)
 	Delete(id string) (string, error)
 }
 
@@ -29,12 +29,12 @@ func NewController(rep repository.Repository) Controller {
 }
 
 //GetAll return all superheroes
-func (s *controller) GetAll() ([]*entity.Superheroe, error) {
+func (s *controller) GetAll() ([]*entity.Superhero, error) {
 	return s.repo.GetSuperheroes(), nil
 }
 
 //GetAll return a single superheroe
-func (s *controller) GetByID(id string) (*entity.Superheroe, error) {
+func (s *controller) GetByID(id string) (*entity.Superhero, error) {
 	resp, err := s.repo.GetSuperheroeById(id)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (s *controller) GetByID(id string) (*entity.Superheroe, error) {
 }
 
 //GetAll add a new superheroe
-func (s *controller) Add(c *entity.Superheroe) (*entity.Superheroe, error) {
+func (s *controller) Add(c *entity.Superhero) (*entity.Superhero, error) {
 	resp := s.repo.GetSuperheroes()
 	err := util.VerifySuperheroe(resp, *c)
 	if err != nil {
@@ -58,7 +58,7 @@ func (s *controller) Add(c *entity.Superheroe) (*entity.Superheroe, error) {
 }
 
 //Edit a superheroe
-func (s *controller) Edit(c *entity.Superheroe) (*entity.Superheroe, error) {
+func (s *controller) Edit(c *entity.Superhero) (*entity.Superhero, error) {
 	heroe, err := s.repo.EditSuperheroe(c)
 	if err != nil {
 		return nil, err

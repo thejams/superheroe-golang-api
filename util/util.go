@@ -7,7 +7,7 @@ import (
 )
 
 //VerifySuperheroe verify if a field from a superheroe is already taken
-func VerifySuperheroe(s []*entity.Superheroe, c entity.Superheroe) error {
+func VerifySuperheroe(s []*entity.Superhero, c entity.Superhero) error {
 	for _, v := range s {
 		if v.Name == c.Name {
 			return errors.New("Name is already taken")
@@ -17,7 +17,7 @@ func VerifySuperheroe(s []*entity.Superheroe, c entity.Superheroe) error {
 }
 
 //SuperheroeExists verify if a superheroe already exists
-func SuperheroeExists(s []*entity.Superheroe, id string) bool {
+func SuperheroeExists(s []*entity.Superhero, id string) bool {
 	for _, v := range s {
 		if v.ID == id {
 			return true
