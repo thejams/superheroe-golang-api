@@ -70,7 +70,7 @@ func (r *repository) DeleteSuperheroe(id string) (string, error) {
 	for index, value := range superheroesList {
 		if value.ID == id {
 			superheroesList = append(superheroesList[:index], superheroesList[index+1:]...)
-			return fmt.Sprint("Character deleted %v", id), nil
+			return fmt.Sprintf("Character deleted %v", id), nil
 		}
 	}
 	return "", &util.NotFoundError{Message: fmt.Sprintf("Superheroe with ID %v does not exist", id)}

@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 )
 
 type HTTPServer interface {
@@ -28,6 +29,7 @@ type httpServer struct {
 
 //NewHTTPServer initialice a new http server
 func NewHTTPServer(ctrl controller.Controller) HTTPServer {
+	log.SetFormatter(&log.JSONFormatter{})
 	return &httpServer{
 		ctrl: ctrl,
 	}
@@ -41,6 +43,7 @@ func (h *httpServer) Health(res http.ResponseWriter, _ *http.Request) {
 // GetSuperheroes provides all the superheroes
 func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
 	superheroList, _ := h.ctrl.GetAll()
+	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Info("ok")
 	json.NewEncoder(res).Encode(superheroList)
 }
 
@@ -49,28 +52,33 @@ func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
 	var newHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Error(err.Error())
 		HandleError(res, "Invalid data in request", http.StatusBadRequest)
 		return
 	}
 
 	err = json.Unmarshal(reqBody, &newHero)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Error(err.Error())
 		HandleError(res, "Invalid data in request", http.StatusBadRequest)
 		return
 	}
 
 	err = ValidateFields(newHero)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Error(err.Error())
 		HandleCustomError(res, err)
 		return
 	}
 
 	_, err = h.ctrl.Add(&newHero)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Error(err.Error())
 		HandleCustomError(res, err)
 		return
 	}
 
+	log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Info("ok")
 	res.WriteHeader(http.StatusCreated)
 	json.NewEncoder(res).Encode(newHero)
 }
@@ -81,10 +89,12 @@ func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 	hero, err := h.ctrl.GetByID(vars["id"])
 
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Error(err.Error())
 		HandleCustomError(res, err)
 		return
 	}
 
+	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Info("ok")
 	json.NewEncoder(res).Encode(hero)
 }
 
@@ -93,6 +103,7 @@ func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 	var updatedHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Error(err.Error())
 		HandleError(res, "Invalid Request Data", http.StatusBadRequest)
 		return
 	}
@@ -100,12 +111,13 @@ func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 	json.Unmarshal(reqBody, &updatedHero)
 	resp, err := h.ctrl.Edit(&updatedHero)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Error(err.Error())
 		HandleCustomError(res, err)
 		return
 	}
 
+	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Info("ok")
 	json.NewEncoder(res).Encode(resp)
-
 }
 
 // DeleteSuperhero deletes a super hero
@@ -114,11 +126,13 @@ func (h *httpServer) DeleteSuperhero(res http.ResponseWriter, req *http.Request)
 
 	resp, err := h.ctrl.Delete(vars["id"])
 	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "DeleteSuperhero"}).Error(err.Error())
 		HandleCustomError(res, err)
 		return
 	}
 
 	json.NewEncoder(res).Encode(resp)
+	log.WithFields(log.Fields{"package": "httpServer", "method": "DeleteSuperhero"}).Info("ok")
 }
 
 // HandleError handle the custom errors to be returned to the user

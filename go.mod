@@ -8,5 +8,6 @@ require (
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
 )
