@@ -2,8 +2,9 @@ package util_test
 
 import (
 	"fmt"
-	"superheroe-api/superheroe-golang-api/entity"
-	"superheroe-api/superheroe-golang-api/util"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
+
 	"testing"
 
 	"github.com/stretchr/testify/assert"

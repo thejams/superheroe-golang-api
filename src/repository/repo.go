@@ -3,8 +3,8 @@ package repository
 
 import (
 	"fmt"
-	"superheroe-api/superheroe-golang-api/entity"
-	"superheroe-api/superheroe-golang-api/util"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
 )
 
 var superheroesList []*entity.Superhero

@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"superheroe-api/superheroe-golang-api/entity"
-	"superheroe-api/superheroe-golang-api/repository"
-	"superheroe-api/superheroe-golang-api/util"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/repository"
+	"superheroe-api/superheroe-golang-api/src/util"
 
 	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"

@@ -3,14 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/controller"
-	"superheroe-api/superheroe-golang-api/httpServer"
-	"superheroe-api/superheroe-golang-api/repository"
+	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/httpServer"
+	"superheroe-api/superheroe-golang-api/src/repository"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	// TODO, read port from environment variables
 	repo := repository.NewRepository()
 	ctrl := controller.NewController(repo)
 	http_server := httpServer.NewHTTPServer(ctrl)

@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	entity "superheroe-api/superheroe-golang-api/entity"
+	entity "superheroe-api/superheroe-golang-api/src/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )

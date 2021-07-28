@@ -3,7 +3,7 @@ package util
 
 import (
 	"errors"
-	"superheroe-api/superheroe-golang-api/entity"
+	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 //VerifySuperheroe verify if a field from a superheroe is already taken

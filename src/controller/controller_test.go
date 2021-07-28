@@ -2,9 +2,9 @@ package controller_test
 
 import (
 	"fmt"
-	"superheroe-api/superheroe-golang-api/controller"
-	"superheroe-api/superheroe-golang-api/entity"
-	mock "superheroe-api/superheroe-golang-api/repository/mocks"
+	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	mock "superheroe-api/superheroe-golang-api/src/repository/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

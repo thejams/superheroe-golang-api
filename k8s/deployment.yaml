@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superheroe-golang-api-deploy
+  labels:
+    app: backend-superheroe-golang-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-superheroe-golang-api
+  template:
+    metadata:
+      labels:
+        app: backend-superheroe-golang-api
+    spec:
+      containers:
+        - name: superheroe-golang-api
+          image: superheroe-golang-api
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10

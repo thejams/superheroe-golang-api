@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/controller"
-	"superheroe-api/superheroe-golang-api/entity"
-	"superheroe-api/superheroe-golang-api/util"
+	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
 
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
