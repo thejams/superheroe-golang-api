@@ -18,16 +18,19 @@ spec:
         - name: superheroe-golang-api
           image: superheroe-golang-api
           imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: superheroe-golang-api-cfg
           ports:
-            - containerPort: 5000
+            - containerPort: 5050
           livenessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 5050
             initialDelaySeconds: 3
             periodSeconds: 3
           readinessProbe:
             tcpSocket:
-              port: 5000
+              port: 5050
             initialDelaySeconds: 5
             periodSeconds: 10

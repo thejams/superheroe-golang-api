@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
@@ -11,7 +14,10 @@ import (
 )
 
 func main() {
-	// TODO, read port from environment variables
+	port := os.Getenv("PORT")
+	if len(strings.TrimSpace(port)) == 0 {
+		port = ":5000"
+	}
 	repo := repository.NewRepository()
 	ctrl := controller.NewController(repo)
 	http_server := httpServer.NewHTTPServer(ctrl)
@@ -25,7 +31,10 @@ func main() {
 	router.HandleFunc("/superhero/{id}", http_server.DeleteSuperhero).Methods("DELETE")
 	router.HandleFunc("/superhero/{id}", http_server.UpdateSuperhero).Methods("PUT")
 
-	log.Fatal(http.ListenAndServe(":5000", router))
+	fmt.Printf("server runing in port %v", port)
+	fmt.Println()
+	log.Fatal(http.ListenAndServe(port, router))
+
 }
 
 func commonMiddleware(next http.Handler) http.Handler {
