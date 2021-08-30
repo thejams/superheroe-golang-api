@@ -24,3 +24,6 @@ a simple golang api that provides information about super heroes
 - 1 service that allows the comunication with the POD.
 - 1 configmap for passing enviornment variables. 
 - 1 ingress to expose the APi outside the k8s cluster and a nginx-ingress-controller for supporting the ingress.
+
+- run minikube service ingress-nginx-controller --url -n ingress-nginx to see the ip and port generated to interact with the API
+

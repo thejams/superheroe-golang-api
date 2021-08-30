@@ -1,6 +1,7 @@
 package httpServer
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -25,13 +26,15 @@ type HTTPServer interface {
 
 type httpServer struct {
 	ctrl controller.Controller
+	ctx  context.Context
 }
 
 //NewHTTPServer initialice a new http server
-func NewHTTPServer(ctrl controller.Controller) HTTPServer {
+func NewHTTPServer(ctrl controller.Controller, ctx context.Context) HTTPServer {
 	log.SetFormatter(&log.JSONFormatter{})
 	return &httpServer{
 		ctrl: ctrl,
+		ctx:  ctx,
 	}
 }
 
@@ -42,7 +45,7 @@ func (h *httpServer) Health(res http.ResponseWriter, _ *http.Request) {
 
 // GetSuperheroes provides all the superheroes
 func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
-	superheroList, _ := h.ctrl.GetAll()
+	superheroList, _ := h.ctrl.GetAll(h.ctx)
 	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Info("ok")
 	json.NewEncoder(res).Encode(superheroList)
 }
@@ -71,7 +74,7 @@ func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = h.ctrl.Add(&newHero)
+	_, err = h.ctrl.Add(&newHero, h.ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "AddSuperHero"}).Error(err.Error())
 		HandleCustomError(res, err)

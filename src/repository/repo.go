@@ -2,6 +2,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/util"
@@ -11,14 +12,14 @@ var superheroesList []*entity.Superhero
 
 //Repository main repository interface
 type Repository interface {
-	GetSuperheroes() []*entity.Superhero
+	GetSuperheroes(ctx context.Context) []entity.Superhero
 	GetSuperheroeById(id string) (*entity.Superhero, error)
 	AddSuperheroe(c *entity.Superhero) *entity.Superhero
 	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)
 	DeleteSuperheroe(id string) (string, error)
 }
 
-type repository struct{}
+/* type repository struct{}
 
 //NewRepository initialice a new repository with clean data
 func NewRepository() Repository {
@@ -30,12 +31,12 @@ func NewRepository() Repository {
 	}
 
 	return &repository{}
-}
+} */
 
 //GetSuperheroes returns all the superheroes in the slice
-func (r *repository) GetSuperheroes() []*entity.Superhero {
+/* func (r *repository) GetSuperheroes() []*entity.Superhero {
 	return superheroesList
-}
+} */
 
 //GetSuperheroeById returns a single superheroe from the slice
 func (r *repository) GetSuperheroeById(i string) (*entity.Superhero, error) {

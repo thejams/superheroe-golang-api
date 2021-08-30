@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -18,9 +20,10 @@ func main() {
 	if len(strings.TrimSpace(port)) == 0 {
 		port = ":5000"
 	}
-	repo := repository.NewRepository()
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	repo := repository.NewMongoConnection(ctx)
 	ctrl := controller.NewController(repo)
-	http_server := httpServer.NewHTTPServer(ctrl)
+	http_server := httpServer.NewHTTPServer(ctrl, ctx)
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.Use(commonMiddleware)

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/repository"
 	"superheroe-api/superheroe-golang-api/src/util"
@@ -11,9 +12,9 @@ import (
 
 //Service main interface for the service with the business logic
 type Controller interface {
-	GetAll() ([]*entity.Superhero, error)
+	GetAll(ctx context.Context) ([]entity.Superhero, error)
 	GetByID(id string) (*entity.Superhero, error)
-	Add(c *entity.Superhero) (*entity.Superhero, error)
+	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Edit(c *entity.Superhero) (*entity.Superhero, error)
 	Delete(id string) (string, error)
 }
@@ -31,9 +32,9 @@ func NewController(rep repository.Repository) Controller {
 }
 
 //GetAll return all superheroes
-func (s *controller) GetAll() ([]*entity.Superhero, error) {
+func (s *controller) GetAll(ctx context.Context) ([]entity.Superhero, error) {
 	log.WithFields(log.Fields{"package": "controller", "method": "GetAll"}).Info("ok")
-	return s.repo.GetSuperheroes(), nil
+	return s.repo.GetSuperheroes(ctx), nil
 }
 
 //GetAll return a single superheroe
@@ -49,8 +50,8 @@ func (s *controller) GetByID(id string) (*entity.Superhero, error) {
 }
 
 //GetAll add a new superheroe
-func (s *controller) Add(c *entity.Superhero) (*entity.Superhero, error) {
-	resp := s.repo.GetSuperheroes()
+func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	resp := s.repo.GetSuperheroes(ctx)
 	err := util.VerifySuperheroe(resp, *c)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
