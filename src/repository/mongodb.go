@@ -10,6 +10,7 @@ import (
 	"superheroe-api/superheroe-golang-api/src/util"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -78,10 +79,20 @@ func (r *repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, e
 
 //GetSuperheroeById returns a single superheroe from the DB
 func (r *repository) GetSuperheroeById(i string, ctx context.Context) (*entity.Superhero, error) {
-	for _, value := range superheroesList {
-		if value.ID == i {
-			return value, nil
-		}
+	var result *entity.Superhero
+	collection := r.db.Collection("superheroe")
+	oid, err := primitive.ObjectIDFromHex(i)
+	if err != nil {
+		return nil, err
 	}
-	return nil, &util.NotFoundError{Message: fmt.Sprintf("no superheroe with id %v found", i)}
+
+	filter := bson.M{"_id": oid}
+	err = collection.FindOne(ctx, filter).Decode(&result)
+	if err == mongo.ErrNoDocuments {
+		return nil, &util.NotFoundError{Message: fmt.Sprintf("no superheroe with id %v found", oid)}
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

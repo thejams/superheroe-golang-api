@@ -68,11 +68,11 @@ func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, err
 
 //DeleteSuperheroe remove a superheroe from the superheroes slice
 func (r *repository) DeleteSuperheroe(id string) (string, error) {
-	for index, value := range superheroesList {
+	/* for index, value := range superheroesList {
 		if value.ID == id {
 			superheroesList = append(superheroesList[:index], superheroesList[index+1:]...)
 			return fmt.Sprintf("Character deleted %v", id), nil
 		}
-	}
+	} */
 	return "", &util.NotFoundError{Message: fmt.Sprintf("Superheroe with ID %v does not exist", id)}
 }

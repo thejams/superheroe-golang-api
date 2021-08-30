@@ -4,9 +4,7 @@ import (
 	"context"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/repository"
-	"superheroe-api/superheroe-golang-api/src/util"
 
-	"github.com/gofrs/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -57,7 +55,7 @@ func (s *controller) GetByID(id string, ctx context.Context) (*entity.Superhero,
 
 //GetAll add a new superheroe
 func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
-	resp, err := s.repo.GetSuperheroes(ctx)
+	/* resp, err := s.repo.GetSuperheroes(ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
 		return nil, err
@@ -73,7 +71,7 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 	c.ID = uuid.String()
 	s.repo.AddSuperheroe(c)
 
-	log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Info("ok")
+	log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Info("ok") */
 	return c, nil
 }
 
