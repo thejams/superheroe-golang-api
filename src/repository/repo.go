@@ -12,8 +12,8 @@ var superheroesList []*entity.Superhero
 
 //Repository main repository interface
 type Repository interface {
-	GetSuperheroes(ctx context.Context) []*entity.Superhero
-	GetSuperheroeById(id string) (*entity.Superhero, error)
+	GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error)
+	GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error)
 	AddSuperheroe(c *entity.Superhero) *entity.Superhero
 	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)
 	DeleteSuperheroe(id string) (string, error)
@@ -39,14 +39,14 @@ func NewRepository() Repository {
 } */
 
 //GetSuperheroeById returns a single superheroe from the slice
-func (r *repository) GetSuperheroeById(i string) (*entity.Superhero, error) {
+/* func (r *repository) GetSuperheroeById(i string) (*entity.Superhero, error) {
 	for _, value := range superheroesList {
 		if value.ID == i {
 			return value, nil
 		}
 	}
 	return nil, &util.NotFoundError{Message: fmt.Sprintf("no superheroe with id %v found", i)}
-}
+} */
 
 //AddSuperheroe add a new superheroe to the superheroes slice
 func (r *repository) AddSuperheroe(c *entity.Superhero) *entity.Superhero {

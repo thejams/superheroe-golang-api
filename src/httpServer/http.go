@@ -45,7 +45,12 @@ func (h *httpServer) Health(res http.ResponseWriter, _ *http.Request) {
 
 // GetSuperheroes provides all the superheroes
 func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
-	superheroList, _ := h.ctrl.GetAll(h.ctx)
+	superheroList, err := h.ctrl.GetAll(h.ctx)
+	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Error(err.Error())
+		HandleCustomError(res, err)
+		return
+	}
 	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Info("ok")
 	json.NewEncoder(res).Encode(superheroList)
 }
@@ -89,7 +94,7 @@ func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
 // GetSuperhero return a single super hero
 func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	hero, err := h.ctrl.GetByID(vars["id"])
+	hero, err := h.ctrl.GetByID(vars["id"], h.ctx)
 
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Error(err.Error())

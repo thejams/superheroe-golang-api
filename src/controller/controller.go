@@ -13,7 +13,7 @@ import (
 //Service main interface for the service with the business logic
 type Controller interface {
 	GetAll(ctx context.Context) ([]*entity.Superhero, error)
-	GetByID(id string) (*entity.Superhero, error)
+	GetByID(id string, ctx context.Context) (*entity.Superhero, error)
 	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Edit(c *entity.Superhero) (*entity.Superhero, error)
 	Delete(id string) (string, error)
@@ -33,13 +33,19 @@ func NewController(rep repository.Repository) Controller {
 
 //GetAll return all superheroes
 func (s *controller) GetAll(ctx context.Context) ([]*entity.Superhero, error) {
+	superheroes, err := s.repo.GetSuperheroes(ctx)
+	if err != nil {
+		log.WithFields(log.Fields{"package": "controller", "method": "GetAll"}).Error(err.Error())
+		return nil, err
+	}
 	log.WithFields(log.Fields{"package": "controller", "method": "GetAll"}).Info("ok")
-	return s.repo.GetSuperheroes(ctx), nil
+
+	return superheroes, nil
 }
 
 //GetAll return a single superheroe
-func (s *controller) GetByID(id string) (*entity.Superhero, error) {
-	resp, err := s.repo.GetSuperheroeById(id)
+func (s *controller) GetByID(id string, ctx context.Context) (*entity.Superhero, error) {
+	resp, err := s.repo.GetSuperheroeById(id, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "GetByID"}).Error(err.Error())
 		return nil, err
@@ -51,8 +57,13 @@ func (s *controller) GetByID(id string) (*entity.Superhero, error) {
 
 //GetAll add a new superheroe
 func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
-	resp := s.repo.GetSuperheroes(ctx)
-	err := util.VerifySuperheroe(resp, *c)
+	resp, err := s.repo.GetSuperheroes(ctx)
+	if err != nil {
+		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
+		return nil, err
+	}
+
+	err = util.VerifySuperheroe(resp, *c)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
 		return nil, &util.BadRequestError{Message: err.Error()}

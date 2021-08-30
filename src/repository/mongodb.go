@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -57,19 +58,30 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	episodesCollection := database.Collection("episodes") */
 }
 
-func (r *repository) GetSuperheroes(ctx context.Context) []*entity.Superhero {
+//GetSuperheroes returns all the superheroes in the DB
+func (r *repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
 	var superheroes []*entity.Superhero
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
 	cursor, err := collection.Find(ctx, filter)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	if err = cursor.All(ctx, &superheroes); err != nil {
-		panic(err)
+		return nil, err
 	}
 	fmt.Println(superheroes)
 
-	return superheroes
+	return superheroes, nil
+}
+
+//GetSuperheroeById returns a single superheroe from the DB
+func (r *repository) GetSuperheroeById(i string, ctx context.Context) (*entity.Superhero, error) {
+	for _, value := range superheroesList {
+		if value.ID == i {
+			return value, nil
+		}
+	}
+	return nil, &util.NotFoundError{Message: fmt.Sprintf("no superheroe with id %v found", i)}
 }
