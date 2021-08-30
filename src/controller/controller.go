@@ -4,6 +4,7 @@ import (
 	"context"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/repository"
+	"superheroe-api/superheroe-golang-api/src/util"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -14,7 +15,7 @@ type Controller interface {
 	GetByID(id string, ctx context.Context) (*entity.Superhero, error)
 	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Edit(c *entity.Superhero) (*entity.Superhero, error)
-	Delete(id string) (string, error)
+	Delete(id string, ctx context.Context) (string, error)
 }
 
 type controller struct {
@@ -55,7 +56,7 @@ func (s *controller) GetByID(id string, ctx context.Context) (*entity.Superhero,
 
 //GetAll add a new superheroe
 func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
-	/* resp, err := s.repo.GetSuperheroes(ctx)
+	resp, err := s.repo.GetSuperheroes(ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
 		return nil, err
@@ -67,12 +68,16 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 		return nil, &util.BadRequestError{Message: err.Error()}
 	}
 
-	uuid, _ := uuid.NewV4()
-	c.ID = uuid.String()
-	s.repo.AddSuperheroe(c)
+	/* uuid, _ := uuid.NewV4()
+	c.ID = uuid.String() */
+	superhero, err := s.repo.AddSuperheroe(c, ctx)
+	if err != nil {
+		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
+		return nil, err
+	}
 
-	log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Info("ok") */
-	return c, nil
+	log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Info("ok")
+	return superhero, nil
 }
 
 //Edit a superheroe
@@ -88,8 +93,8 @@ func (s *controller) Edit(c *entity.Superhero) (*entity.Superhero, error) {
 }
 
 //Delete delete a superheroe
-func (s *controller) Delete(id string) (string, error) {
-	response, err := s.repo.DeleteSuperheroe(id)
+func (s *controller) Delete(id string, ctx context.Context) (string, error) {
+	response, err := s.repo.DeleteSuperheroe(id, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Delete"}).Error(err.Error())
 		return "", err

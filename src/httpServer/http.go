@@ -132,7 +132,7 @@ func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 func (h *httpServer) DeleteSuperhero(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
-	resp, err := h.ctrl.Delete(vars["id"])
+	resp, err := h.ctrl.Delete(vars["id"], h.ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "DeleteSuperhero"}).Error(err.Error())
 		HandleCustomError(res, err)

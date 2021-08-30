@@ -14,9 +14,9 @@ var superheroesList []*entity.Superhero
 type Repository interface {
 	GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error)
 	GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error)
-	AddSuperheroe(c *entity.Superhero) *entity.Superhero
+	AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)
-	DeleteSuperheroe(id string) (string, error)
+	DeleteSuperheroe(id string, ctx context.Context) (string, error)
 }
 
 /* type repository struct{}
@@ -49,10 +49,10 @@ func NewRepository() Repository {
 } */
 
 //AddSuperheroe add a new superheroe to the superheroes slice
-func (r *repository) AddSuperheroe(c *entity.Superhero) *entity.Superhero {
+/* func (r *repository) AddSuperheroe(c *entity.Superhero) *entity.Superhero {
 	superheroesList = append(superheroesList, c)
 	return c
-}
+} */
 
 //EditCharacter edit a superheroe with new information
 func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error) {
@@ -67,12 +67,12 @@ func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, err
 }
 
 //DeleteSuperheroe remove a superheroe from the superheroes slice
-func (r *repository) DeleteSuperheroe(id string) (string, error) {
-	/* for index, value := range superheroesList {
+/* func (r *repository) DeleteSuperheroe(id string) (string, error) {
+	for index, value := range superheroesList {
 		if value.ID == id {
 			superheroesList = append(superheroesList[:index], superheroesList[index+1:]...)
 			return fmt.Sprintf("Character deleted %v", id), nil
 		}
-	} */
+	}
 	return "", &util.NotFoundError{Message: fmt.Sprintf("Superheroe with ID %v does not exist", id)}
-}
+} */

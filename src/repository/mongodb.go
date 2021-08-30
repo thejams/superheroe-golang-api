@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// repository main struct for mongodb connection
+// repository is main struct for mongodb connection
 type repository struct {
 	db *mongo.Database
 }
@@ -55,8 +55,6 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	return &repository{
 		db: database,
 	}, client
-	/* podcastsCollection := database.Collection("podcasts")
-	episodesCollection := database.Collection("episodes") */
 }
 
 //GetSuperheroes returns all the superheroes in the DB
@@ -95,4 +93,35 @@ func (r *repository) GetSuperheroeById(i string, ctx context.Context) (*entity.S
 	}
 
 	return result, nil
+}
+
+//AddSuperheroe add a new superheroe to the DB
+func (r *repository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	collection := r.db.Collection("superheroe")
+	filter := bson.D{{"name", c.Name}, {"alias", c.Alias}}
+	res, err := collection.InsertOne(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	id := res.InsertedID.(primitive.ObjectID)
+	c.ID = id
+
+	return c, nil
+}
+
+//DeleteSuperheroe remove a superheroe from the DB
+func (r *repository) DeleteSuperheroe(id string, ctx context.Context) (string, error) {
+	collection := r.db.Collection("superheroe")
+	oid, err := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": oid}
+	res, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return "", err
+	}
+	if res.DeletedCount == 0 {
+		return "", &util.NotFoundError{Message: fmt.Sprintf("document not found %v", res)}
+	}
+
+	return fmt.Sprintf("document deleted %v", res), nil
 }
