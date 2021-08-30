@@ -12,7 +12,7 @@ var superheroesList []*entity.Superhero
 
 //Repository main repository interface
 type Repository interface {
-	GetSuperheroes(ctx context.Context) []entity.Superhero
+	GetSuperheroes(ctx context.Context) []*entity.Superhero
 	GetSuperheroeById(id string) (*entity.Superhero, error)
 	AddSuperheroe(c *entity.Superhero) *entity.Superhero
 	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)

@@ -10,7 +10,6 @@ import (
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -20,7 +19,7 @@ func main() {
 	if len(strings.TrimSpace(port)) == 0 {
 		port = ":5000"
 	}
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx := context.Background()
 	repo, mongoClient := repository.NewMongoConnection(ctx)
 	defer mongoClient.Disconnect(ctx)
 	ctrl := controller.NewController(repo)

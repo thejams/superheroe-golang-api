@@ -1,6 +1,7 @@
 package controller_test
 
 import (
+	"context"
 	"fmt"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/entity"
@@ -28,8 +29,8 @@ func TestGetAll(t *testing.T) {
 	t.Run("should return an array with 1 superheroe", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
 		ctrl := controller.NewController(mockRepo)
-		mockRepo.On("GetSuperheroes").Return([]*entity.Superhero{&batman})
-		result, _ := ctrl.GetAll()
+		mockRepo.On("GetSuperheroes", context.TODO()).Return([]*entity.Superhero{&batman})
+		result, _ := ctrl.GetAll(context.TODO())
 
 		assert.Equal(t, "Batman", result[0].Name)
 		assert.Equal(t, "World Greatest Detective", result[0].Alias)
@@ -68,8 +69,8 @@ func TestAdd(t *testing.T) {
 			Name:  "Batman",
 			Alias: "The Dark Knight",
 		}
-		mockRepo.On("GetSuperheroes").Return(sh)
-		_, err := ctrl.Add(&nh)
+		mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
+		_, err := ctrl.Add(&nh, context.TODO())
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "BadRequest: Name is already taken", err.Error())
@@ -82,9 +83,9 @@ func TestAdd(t *testing.T) {
 			Name:  "Superman",
 			Alias: "The Man Of Steel",
 		}
-		mockRepo.On("GetSuperheroes").Return(sh)
+		mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
 		mockRepo.On("AddSuperheroe", &nh).Return(&nh)
-		result, _ := ctrl.Add(&nh)
+		result, _ := ctrl.Add(&nh, context.TODO())
 
 		assert.Equal(t, "Superman", result.Name)
 		assert.Equal(t, "The Man Of Steel", result.Alias)
@@ -147,10 +148,10 @@ func TestDelete(t *testing.T) {
 func BenchmarkByID(b *testing.B) {
 	mockRepo := new(mock.Repository)
 	ctrl := controller.NewController(mockRepo)
-	mockRepo.On("GetSuperheroes").Return([]*entity.Superhero{&batman})
+	mockRepo.On("GetSuperheroes", context.TODO()).Return([]*entity.Superhero{&batman})
 
 	for i := 0; i < b.N; i++ {
-		ctrl.GetAll()
+		ctrl.GetAll(context.TODO())
 	}
 }
 
@@ -161,11 +162,11 @@ func BenchmarkAdd(b *testing.B) {
 		Name:  "Superman",
 		Alias: "The Man Of Steel",
 	}
-	mockRepo.On("GetSuperheroes").Return(sh)
+	mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
 	mockRepo.On("AddSuperheroe", &nh).Return(&nh)
 
 	for i := 0; i < b.N; i++ {
-		ctrl.Add(&nh)
+		ctrl.Add(&nh, context.TODO())
 	}
 }
 
@@ -178,7 +179,7 @@ func BenchmarkEdit(b *testing.B) {
 		Alias: "The Last Son Of Krypton",
 	}
 	mockRepo.On("EditSuperheroe", &nh).Return(&nh, nil)
-	mockRepo.On("GetSuperheroes").Return(sh)
+	mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
 
 	for i := 0; i < b.N; i++ {
 		ctrl.Edit(&nh)
@@ -188,7 +189,7 @@ func BenchmarkEdit(b *testing.B) {
 func BenchmarkDelete(b *testing.B) {
 	mockRepo := new(mock.Repository)
 	ctrl := controller.NewController(mockRepo)
-	mockRepo.On("GetSuperheroes").Return(sh)
+	mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
 	mockRepo.On("DeleteSuperheroe", "1").Return("Character deleted 1", nil)
 
 	for i := 0; i < b.N; i++ {

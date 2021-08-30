@@ -30,7 +30,7 @@ func getDBConnection() (string, string, string, string) {
 	}
 	host := os.Getenv("MONGO_HOST")
 	if len(strings.TrimSpace(host)) == 0 {
-		host = "localhost"
+		host = "127.0.0.1"
 	}
 	port := os.Getenv("MONGO_PORT")
 	if len(strings.TrimSpace(port)) == 0 {
@@ -57,8 +57,8 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	episodesCollection := database.Collection("episodes") */
 }
 
-func (r *repository) GetSuperheroes(ctx context.Context) []entity.Superhero {
-	var superheroes []entity.Superhero
+func (r *repository) GetSuperheroes(ctx context.Context) []*entity.Superhero {
+	var superheroes []*entity.Superhero
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
 	cursor, err := collection.Find(ctx, filter)

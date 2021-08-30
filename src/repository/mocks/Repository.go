@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	context "context"
 	entity "superheroe-api/superheroe-golang-api/src/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -96,13 +97,13 @@ func (_m *Repository) GetSuperheroeById(id string) (*entity.Superhero, error) {
 	return r0, r1
 }
 
-// GetSuperheroes provides a mock function with given fields:
-func (_m *Repository) GetSuperheroes() []*entity.Superhero {
-	ret := _m.Called()
+// GetSuperheroes provides a mock function with given fields: ctx
+func (_m *Repository) GetSuperheroes(ctx context.Context) []*entity.Superhero {
+	ret := _m.Called(ctx)
 
 	var r0 []*entity.Superhero
-	if rf, ok := ret.Get(0).(func() []*entity.Superhero); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) []*entity.Superhero); ok {
+		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*entity.Superhero)
