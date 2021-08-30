@@ -14,36 +14,43 @@ type Repository struct {
 	mock.Mock
 }
 
-// AddSuperheroe provides a mock function with given fields: c
-func (_m *Repository) AddSuperheroe(c *entity.Superhero) *entity.Superhero {
-	ret := _m.Called(c)
+// AddSuperheroe provides a mock function with given fields: c, ctx
+func (_m *Repository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	ret := _m.Called(c, ctx)
 
 	var r0 *entity.Superhero
-	if rf, ok := ret.Get(0).(func(*entity.Superhero) *entity.Superhero); ok {
-		r0 = rf(c)
+	if rf, ok := ret.Get(0).(func(*entity.Superhero, context.Context) *entity.Superhero); ok {
+		r0 = rf(c, ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Superhero)
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*entity.Superhero, context.Context) error); ok {
+		r1 = rf(c, ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
-// DeleteSuperheroe provides a mock function with given fields: id
-func (_m *Repository) DeleteSuperheroe(id string) (string, error) {
-	ret := _m.Called(id)
+// DeleteSuperheroe provides a mock function with given fields: id, ctx
+func (_m *Repository) DeleteSuperheroe(id string, ctx context.Context) (string, error) {
+	ret := _m.Called(id, ctx)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(string) string); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, context.Context) string); ok {
+		r0 = rf(id, ctx)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(string, context.Context) error); ok {
+		r1 = rf(id, ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -51,13 +58,13 @@ func (_m *Repository) DeleteSuperheroe(id string) (string, error) {
 	return r0, r1
 }
 
-// EditSuperheroe provides a mock function with given fields: c
-func (_m *Repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error) {
-	ret := _m.Called(c)
+// EditSuperheroe provides a mock function with given fields: id, c, ctx
+func (_m *Repository) EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	ret := _m.Called(id, c, ctx)
 
 	var r0 *entity.Superhero
-	if rf, ok := ret.Get(0).(func(*entity.Superhero) *entity.Superhero); ok {
-		r0 = rf(c)
+	if rf, ok := ret.Get(0).(func(string, *entity.Superhero, context.Context) *entity.Superhero); ok {
+		r0 = rf(id, c, ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Superhero)
@@ -65,8 +72,8 @@ func (_m *Repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, er
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*entity.Superhero) error); ok {
-		r1 = rf(c)
+	if rf, ok := ret.Get(1).(func(string, *entity.Superhero, context.Context) error); ok {
+		r1 = rf(id, c, ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -74,13 +81,13 @@ func (_m *Repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, er
 	return r0, r1
 }
 
-// GetSuperheroeById provides a mock function with given fields: id
-func (_m *Repository) GetSuperheroeById(id string) (*entity.Superhero, error) {
-	ret := _m.Called(id)
+// GetSuperheroeById provides a mock function with given fields: id, ctx
+func (_m *Repository) GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error) {
+	ret := _m.Called(id, ctx)
 
 	var r0 *entity.Superhero
-	if rf, ok := ret.Get(0).(func(string) *entity.Superhero); ok {
-		r0 = rf(id)
+	if rf, ok := ret.Get(0).(func(string, context.Context) *entity.Superhero); ok {
+		r0 = rf(id, ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*entity.Superhero)
@@ -88,8 +95,8 @@ func (_m *Repository) GetSuperheroeById(id string) (*entity.Superhero, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(id)
+	if rf, ok := ret.Get(1).(func(string, context.Context) error); ok {
+		r1 = rf(id, ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -98,7 +105,7 @@ func (_m *Repository) GetSuperheroeById(id string) (*entity.Superhero, error) {
 }
 
 // GetSuperheroes provides a mock function with given fields: ctx
-func (_m *Repository) GetSuperheroes(ctx context.Context) []*entity.Superhero {
+func (_m *Repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
 	ret := _m.Called(ctx)
 
 	var r0 []*entity.Superhero
@@ -110,5 +117,12 @@ func (_m *Repository) GetSuperheroes(ctx context.Context) []*entity.Superhero {
 		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }

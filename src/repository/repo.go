@@ -3,9 +3,7 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"superheroe-api/superheroe-golang-api/src/entity"
-	"superheroe-api/superheroe-golang-api/src/util"
 )
 
 var superheroesList []*entity.Superhero
@@ -15,7 +13,7 @@ type Repository interface {
 	GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error)
 	GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error)
 	AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
-	EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error)
+	EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	DeleteSuperheroe(id string, ctx context.Context) (string, error)
 }
 
@@ -55,7 +53,7 @@ func NewRepository() Repository {
 } */
 
 //EditCharacter edit a superheroe with new information
-func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error) {
+/* func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, error) {
 	for index, value := range superheroesList {
 		if value.ID == c.ID {
 			superheroesList = append(superheroesList[:index], superheroesList[index+1:]...)
@@ -64,7 +62,7 @@ func (r *repository) EditSuperheroe(c *entity.Superhero) (*entity.Superhero, err
 		}
 	}
 	return nil, &util.NotFoundError{Message: fmt.Sprintf("Superheroe with ID %v does not exist", c.ID)}
-}
+} */
 
 //DeleteSuperheroe remove a superheroe from the superheroes slice
 /* func (r *repository) DeleteSuperheroe(id string) (string, error) {

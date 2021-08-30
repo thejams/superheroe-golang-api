@@ -125,3 +125,26 @@ func (r *repository) DeleteSuperheroe(id string, ctx context.Context) (string, e
 
 	return fmt.Sprintf("document deleted %v", res), nil
 }
+
+//EditCharacter updates a superheroe in DB with new information
+func (r *repository) EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	collection := r.db.Collection("superheroe")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": oid}
+	_, err = collection.UpdateOne(ctx, filter, bson.D{
+		{"$set", bson.D{
+			{"name", c.Name},
+			{"alias", c.Alias},
+		}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	c.ID = oid
+
+	return c, nil
+}
