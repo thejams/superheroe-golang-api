@@ -40,7 +40,7 @@ func getDBConnection() (string, string, string, string) {
 }
 
 // NewMongoConnection provides a new mongodb connection
-func NewMongoConnection(ctx context.Context) Repository {
+func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	usr, pwd, host, port := getDBConnection()
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s", usr, pwd, host, port)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
@@ -52,7 +52,7 @@ func NewMongoConnection(ctx context.Context) Repository {
 	database := client.Database("user-test")
 	return &repository{
 		db: database,
-	}
+	}, client
 	/* podcastsCollection := database.Collection("podcasts")
 	episodesCollection := database.Collection("episodes") */
 }

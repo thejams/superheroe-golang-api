@@ -21,7 +21,8 @@ func main() {
 		port = ":5000"
 	}
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	repo := repository.NewMongoConnection(ctx)
+	repo, mongoClient := repository.NewMongoConnection(ctx)
+	defer mongoClient.Disconnect(ctx)
 	ctrl := controller.NewController(repo)
 	http_server := httpServer.NewHTTPServer(ctrl, ctx)
 
