@@ -14,7 +14,7 @@ type Controller interface {
 	GetAll(ctx context.Context) ([]*entity.Superhero, error)
 	GetByID(id string, ctx context.Context) (*entity.Superhero, error)
 	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
-	Edit(c *entity.Superhero) (*entity.Superhero, error)
+	Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Delete(id string, ctx context.Context) (string, error)
 }
 
@@ -68,8 +68,6 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 		return nil, &util.BadRequestError{Message: err.Error()}
 	}
 
-	/* uuid, _ := uuid.NewV4()
-	c.ID = uuid.String() */
 	superhero, err := s.repo.AddSuperheroe(c, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
@@ -81,8 +79,8 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 }
 
 //Edit a superheroe
-func (s *controller) Edit(c *entity.Superhero) (*entity.Superhero, error) {
-	heroe, err := s.repo.EditSuperheroe(c)
+func (s *controller) Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+	heroe, err := s.repo.EditSuperheroe(id, c, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Edit"}).Error(err.Error())
 		return nil, err

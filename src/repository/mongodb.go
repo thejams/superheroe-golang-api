@@ -15,8 +15,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// repository is main struct for mongodb connection
-type repository struct {
+// mongoRepository main struct for mongodb logic
+type mongoRepository struct {
 	db *mongo.Database
 }
 
@@ -52,13 +52,13 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	// defer client.Disconnect(ctx)
 
 	database := client.Database("user-test")
-	return &repository{
+	return &mongoRepository{
 		db: database,
 	}, client
 }
 
 //GetSuperheroes returns all the superheroes in the DB
-func (r *repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
+func (r *mongoRepository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
 	var superheroes []*entity.Superhero
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
@@ -76,7 +76,7 @@ func (r *repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, e
 }
 
 //GetSuperheroeById returns a single superheroe from the DB
-func (r *repository) GetSuperheroeById(i string, ctx context.Context) (*entity.Superhero, error) {
+func (r *mongoRepository) GetSuperheroeById(i string, ctx context.Context) (*entity.Superhero, error) {
 	var result *entity.Superhero
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(i)
@@ -96,7 +96,7 @@ func (r *repository) GetSuperheroeById(i string, ctx context.Context) (*entity.S
 }
 
 //AddSuperheroe add a new superheroe to the DB
-func (r *repository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+func (r *mongoRepository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
 	collection := r.db.Collection("superheroe")
 	filter := bson.D{{"name", c.Name}, {"alias", c.Alias}}
 	res, err := collection.InsertOne(ctx, filter)
@@ -111,7 +111,7 @@ func (r *repository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*e
 }
 
 //DeleteSuperheroe remove a superheroe from the DB
-func (r *repository) DeleteSuperheroe(id string, ctx context.Context) (string, error) {
+func (r *mongoRepository) DeleteSuperheroe(id string, ctx context.Context) (string, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": oid}
@@ -127,7 +127,7 @@ func (r *repository) DeleteSuperheroe(id string, ctx context.Context) (string, e
 }
 
 //EditCharacter updates a superheroe in DB with new information
-func (r *repository) EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
+func (r *mongoRepository) EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {

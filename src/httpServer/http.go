@@ -108,6 +108,7 @@ func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 
 // UpdateSuperhero updates a super hero information
 func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
 	var updatedHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -117,7 +118,7 @@ func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 	}
 
 	json.Unmarshal(reqBody, &updatedHero)
-	resp, err := h.ctrl.Edit(&updatedHero)
+	resp, err := h.ctrl.Edit(vars["id"], &updatedHero, h.ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperhero"}).Error(err.Error())
 		HandleCustomError(res, err)

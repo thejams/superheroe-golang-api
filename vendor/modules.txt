@@ -1,5 +1,7 @@
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
+# github.com/felixge/httpsnoop v1.0.1
+github.com/felixge/httpsnoop
 # github.com/go-playground/locales v0.13.0
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
@@ -13,9 +15,11 @@ github.com/go-playground/validator
 github.com/go-stack/stack
 # github.com/gofrs/uuid v4.0.0+incompatible
 ## explicit
-github.com/gofrs/uuid
 # github.com/golang/snappy v0.0.1
 github.com/golang/snappy
+# github.com/gorilla/handlers v1.5.1
+## explicit
+github.com/gorilla/handlers
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux

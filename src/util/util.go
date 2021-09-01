@@ -4,8 +4,6 @@ package util
 import (
 	"errors"
 	"superheroe-api/superheroe-golang-api/src/entity"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //VerifySuperheroe verify if a field from a superheroe is already taken
@@ -19,9 +17,9 @@ func VerifySuperheroe(s []*entity.Superhero, c entity.Superhero) error {
 }
 
 //SuperheroeExists verify if a superheroe already exists
-func SuperheroeExists(s []*entity.Superhero, id primitive.ObjectID) bool {
+func SuperheroeExists(s []*entity.Superhero, name string) bool {
 	for _, v := range s {
-		if v.ID == id {
+		if v.Name == name {
 			return true
 		}
 	}

@@ -11,6 +11,7 @@ import (
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -34,9 +35,13 @@ func main() {
 	router.HandleFunc("/superhero/{id}", http_server.DeleteSuperhero).Methods("DELETE")
 	router.HandleFunc("/superhero/{id}", http_server.UpdateSuperhero).Methods("PUT")
 
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})
+	origins := handlers.AllowedMethods([]string{"*"})
+
 	fmt.Printf("server runing in port %v", port)
 	fmt.Println()
-	log.Fatal(http.ListenAndServe(port, router))
+	log.Fatal(http.ListenAndServe(port, handlers.CORS(credentials, methods, origins)(router)))
 
 }
 
