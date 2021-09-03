@@ -71,7 +71,7 @@ func TestGetByID(t *testing.T) {
 }
 
 func TestAdd(t *testing.T) {
-	t.Run("should return when name of heroe already exists", func(t *testing.T) {
+	t.Run("should return error when name of heroe already exists", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
 		ctrl := controller.NewController(mockRepo)
 		nh := entity.Superhero{
@@ -98,6 +98,21 @@ func TestAdd(t *testing.T) {
 
 		assert.Equal(t, "Superman", result.Name)
 		assert.Equal(t, "The Man Of Steel", result.Alias)
+	})
+
+	t.Run("should error when data base insert operation fails", func(t *testing.T) {
+		mockRepo := new(mock.Repository)
+		ctrl := controller.NewController(mockRepo)
+		nh := entity.Superhero{
+			Name:  "Superman",
+			Alias: "The Man Of Steel",
+		}
+		mockRepo.On("GetSuperheroes", context.TODO()).Return(sh, nil)
+		mockRepo.On("AddSuperheroe", &nh, context.TODO()).Return(nil, fmt.Errorf("Insert operation fail"))
+		_, err := ctrl.Add(&nh, context.TODO())
+
+		assert.NotNil(t, err)
+		assert.Equal(t, "Insert operation fail", err.Error())
 	})
 }
 

@@ -63,6 +63,7 @@ func (r *mongoRepository) GetSuperheroes(ctx context.Context) ([]*entity.Superhe
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
 	cursor, err := collection.Find(ctx, filter)
+	defer cursor.Close(ctx)
 
 	if err != nil {
 		return nil, err
