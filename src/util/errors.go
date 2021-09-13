@@ -23,11 +23,13 @@ func (e *NotFoundError) Error() string {
 	return fmt.Sprintf("NotFound: %v", e.Message)
 }
 
+//ErrorWrapper main struct for custom error return
 type ErrorWrapper struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
 
+//DecodeError returns a specific type of error according to type
 func DecodeError(err error) (status int, errBody interface{}) {
 	switch err.(type) {
 	case *BadRequestError:

@@ -1,4 +1,4 @@
-//Package repository provides all the methods to persit data in a slice
+//Package repository provides all the methods to persit data in the DB
 package repository
 
 import (
@@ -49,7 +49,6 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	if err != nil {
 		panic(err)
 	}
-	// defer client.Disconnect(ctx)
 
 	database := client.Database("user-test")
 	return &mongoRepository{
@@ -127,7 +126,7 @@ func (r *mongoRepository) DeleteSuperheroe(id string, ctx context.Context) (stri
 	return fmt.Sprintf("document deleted %v", res), nil
 }
 
-//EditCharacter updates a superheroe in DB with new information
+//EditSuperheroe updates a superheroe in DB with new information
 func (r *mongoRepository) EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
@@ -136,12 +135,13 @@ func (r *mongoRepository) EditSuperheroe(id string, c *entity.Superhero, ctx con
 	}
 
 	filter := bson.M{"_id": oid}
-	_, err = collection.UpdateOne(ctx, filter, bson.D{
+	set := bson.D{
 		{"$set", bson.D{
 			{"name", c.Name},
 			{"alias", c.Alias},
 		}},
-	})
+	}
+	_, err = collection.UpdateOne(ctx, filter, set)
 	if err != nil {
 		return nil, err
 	}
