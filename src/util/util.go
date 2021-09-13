@@ -17,9 +17,9 @@ func VerifySuperheroe(s []*entity.Superhero, c entity.Superhero) error {
 }
 
 //SuperheroeExists verify if a superheroe already exists
-func SuperheroeExists(s []*entity.Superhero, id string) bool {
+func SuperheroeExists(s []*entity.Superhero, name string) bool {
 	for _, v := range s {
-		if v.ID == id {
+		if v.Name == name {
 			return true
 		}
 	}

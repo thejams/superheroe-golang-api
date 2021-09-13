@@ -1,10 +1,12 @@
 package entity
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 // Superheroe
 type Superhero struct {
-	ID    string `json:"id" validate:"omitempty"`
-	Name  string `json:"name" validate:"required"`
-	Alias string `json:"alias" validate:"required"`
+	ID    primitive.ObjectID `bson:"_id,omitempty" json:"id" validate:"omitempty"`
+	Name  string             `bson:"name,omitempty" json:"name" validate:"required" `
+	Alias string             `bson:"alias,omitempty" json:"alias" validate:"required"`
 }
 
 // Message

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -18,9 +20,11 @@ func main() {
 	if len(strings.TrimSpace(port)) == 0 {
 		port = ":5000"
 	}
-	repo := repository.NewRepository()
+	ctx := context.Background()
+	repo, mongoClient := repository.NewMongoConnection(ctx)
+	defer mongoClient.Disconnect(ctx)
 	ctrl := controller.NewController(repo)
-	http_server := httpServer.NewHTTPServer(ctrl)
+	http_server := httpServer.NewHTTPServer(ctrl, ctx)
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.Use(commonMiddleware)
@@ -31,9 +35,13 @@ func main() {
 	router.HandleFunc("/superhero/{id}", http_server.DeleteSuperhero).Methods("DELETE")
 	router.HandleFunc("/superhero/{id}", http_server.UpdateSuperhero).Methods("PUT")
 
+	credentials := handlers.AllowCredentials()
+	methods := handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})
+	origins := handlers.AllowedMethods([]string{"*"})
+
 	fmt.Printf("server runing in port %v", port)
 	fmt.Println()
-	log.Fatal(http.ListenAndServe(port, router))
+	log.Fatal(http.ListenAndServe(port, handlers.CORS(credentials, methods, origins)(router)))
 
 }
 

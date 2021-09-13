@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -16,14 +17,16 @@ var (
 )
 
 func init() {
+	batmanOID, _ := primitive.ObjectIDFromHex("1")
+	supermanOID, _ := primitive.ObjectIDFromHex("2")
 	batman = entity.Superhero{
-		ID:    "1",
+		ID:    batmanOID,
 		Name:  "Batman",
 		Alias: "The World's Greatest Detective",
 	}
 
 	superman = entity.Superhero{
-		ID:    "2",
+		ID:    supermanOID,
 		Name:  "Superman",
 		Alias: "The Last Son Of Krypton",
 	}
@@ -31,8 +34,9 @@ func init() {
 
 func TestVerifySuperheroe(t *testing.T) {
 	t.Run("should return error when name is already taken", func(t *testing.T) {
+		oid, _ := primitive.ObjectIDFromHex("1")
 		thor := entity.Superhero{
-			ID:    "1",
+			ID:    oid,
 			Name:  "Thor",
 			Alias: "God of Thunder",
 		}
@@ -53,25 +57,27 @@ func TestVerifySuperheroe(t *testing.T) {
 
 func TestSuperheroeExists(t *testing.T) {
 	t.Run("should return true if a heroe exists", func(t *testing.T) {
+		oid, _ := primitive.ObjectIDFromHex("1")
 		hulk := entity.Superhero{
-			ID:    "1",
+			ID:    oid,
 			Name:  "The Hulk",
 			Alias: "The Strongest There Is",
 		}
 		sh := []*entity.Superhero{&hulk}
-		resp := util.SuperheroeExists(sh, "1")
+		resp := util.SuperheroeExists(sh, "The Hulk")
 
 		assert.True(t, resp)
 	})
 
 	t.Run("should return false if a heroe does not exists", func(t *testing.T) {
+		oid, _ := primitive.ObjectIDFromHex("1")
 		wonderWoman := entity.Superhero{
-			ID:    "1",
+			ID:    oid,
 			Name:  "Wonder Woman",
 			Alias: "Princess of Themyscira",
 		}
 		sh := []*entity.Superhero{&wonderWoman}
-		resp := util.SuperheroeExists(sh, "3")
+		resp := util.SuperheroeExists(sh, "Thor")
 
 		assert.False(t, resp)
 	})
@@ -87,14 +93,14 @@ func BenchmarkVerifySuperheroe(b *testing.B) {
 func BenchmarkSuperheroeExists(b *testing.B) {
 	sh := []*entity.Superhero{&batman}
 	for i := 0; i < b.N; i++ {
-		util.SuperheroeExists(sh, "3")
+		util.SuperheroeExists(sh, "Batman")
 	}
 }
 
 func ExampleSuperheroeExists() {
 	sh := []*entity.Superhero{&batman}
-	fmt.Println(util.SuperheroeExists(sh, "1"))
-	fmt.Println(util.SuperheroeExists(sh, "2"))
+	fmt.Println(util.SuperheroeExists(sh, "Batman"))
+	fmt.Println(util.SuperheroeExists(sh, "Thor"))
 	//Output:
 	//true
 	//false
