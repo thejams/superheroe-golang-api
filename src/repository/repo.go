@@ -8,6 +8,7 @@ import (
 
 //Repository main interface
 type Repository interface {
+	Close(ctx context.Context)
 	GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error)
 	GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error)
 	AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)

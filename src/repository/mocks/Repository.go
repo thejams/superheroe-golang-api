@@ -37,6 +37,11 @@ func (_m *Repository) AddSuperheroe(c *entity.Superhero, ctx context.Context) (*
 	return r0, r1
 }
 
+// Close provides a mock function with given fields: ctx
+func (_m *Repository) Close(ctx context.Context) {
+	_m.Called(ctx)
+}
+
 // DeleteSuperheroe provides a mock function with given fields: id, ctx
 func (_m *Repository) DeleteSuperheroe(id string, ctx context.Context) (string, error) {
 	ret := _m.Called(id, ctx)

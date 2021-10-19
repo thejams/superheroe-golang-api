@@ -56,6 +56,11 @@ func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
 	}, client
 }
 
+//Close close the connection to the MongoDB database
+func (r *mongoRepository) Close(ctx context.Context) {
+	r.db.Client().Disconnect(ctx)
+}
+
 //GetSuperheroes returns all the superheroes in the DB
 func (r *mongoRepository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
 	var superheroes []*entity.Superhero
