@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
@@ -23,7 +24,8 @@ func main() {
 	ctx := context.Background()
 	repo, mongoClient := repository.NewMongoConnection(ctx)
 	defer mongoClient.Disconnect(ctx)
-	ctrl := controller.NewController(repo)
+	client := client.NewTradeMade()
+	ctrl := controller.NewController(repo, client)
 	http_server := httpServer.NewHTTPServer(ctrl, ctx)
 
 	router := mux.NewRouter().StrictSlash(true)
@@ -34,6 +36,7 @@ func main() {
 	router.HandleFunc("/superhero/{id}", http_server.GetSuperhero).Methods("GET")
 	router.HandleFunc("/superhero/{id}", http_server.DeleteSuperhero).Methods("DELETE")
 	router.HandleFunc("/superhero/{id}", http_server.UpdateSuperhero).Methods("PUT")
+	router.HandleFunc("/client/get", http_server.GetHttpRequest).Methods("GET")
 
 	credentials := handlers.AllowCredentials()
 	methods := handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})

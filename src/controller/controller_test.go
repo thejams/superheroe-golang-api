@@ -30,7 +30,7 @@ func init() {
 func TestGetAll(t *testing.T) {
 	t.Run("should return an array with 1 superheroe", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("GetSuperheroes", context.TODO()).Return([]*entity.Superhero{&batman}, nil)
 		result, _ := ctrl.GetAll(context.TODO())
 
@@ -39,7 +39,7 @@ func TestGetAll(t *testing.T) {
 	})
 	t.Run("should return error when  database connection fails", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("GetSuperheroes", context.TODO()).Return(nil, fmt.Errorf("error in database connection"))
 		_, err := ctrl.GetAll(context.TODO())
 
@@ -51,7 +51,7 @@ func TestGetAll(t *testing.T) {
 func TestGetByID(t *testing.T) {
 	t.Run("should return error when no superheroe is found", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("GetSuperheroeById", "1", context.TODO()).Return(nil, fmt.Errorf("no superheroe with id %v found", 1))
 		_, err := ctrl.GetByID("1", context.TODO())
 
@@ -61,7 +61,7 @@ func TestGetByID(t *testing.T) {
 
 	t.Run("should return a superheroe", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("GetSuperheroeById", "1", context.TODO()).Return(&batman, nil)
 		result, _ := ctrl.GetByID("1", context.TODO())
 
@@ -73,7 +73,7 @@ func TestGetByID(t *testing.T) {
 func TestAdd(t *testing.T) {
 	t.Run("should return error when name of heroe already exists", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		nh := entity.Superhero{
 			Name:  "Batman",
 			Alias: "The Dark Knight",
@@ -87,7 +87,7 @@ func TestAdd(t *testing.T) {
 
 	t.Run("should add a new superheroe", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		nh := entity.Superhero{
 			Name:  "Superman",
 			Alias: "The Man Of Steel",
@@ -102,7 +102,7 @@ func TestAdd(t *testing.T) {
 
 	t.Run("should error when data base insert operation fails", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		nh := entity.Superhero{
 			Name:  "Superman",
 			Alias: "The Man Of Steel",
@@ -125,7 +125,7 @@ func TestEdit(t *testing.T) {
 			Alias: "The Man Of Steel",
 		}
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("EditSuperheroe", "1", &nh, context.TODO()).Return(nil, fmt.Errorf("Superheroe with ID %v does not exist", 2))
 		_, err := ctrl.Edit("1", &nh, context.TODO())
 
@@ -135,7 +135,7 @@ func TestEdit(t *testing.T) {
 
 	t.Run("should edit a superheroe information", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		oid, _ := primitive.ObjectIDFromHex("1")
 		nh := entity.Superhero{
 			ID:    oid,
@@ -153,7 +153,7 @@ func TestEdit(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("should return error when heroe does not exists", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("DeleteSuperheroe", "2", context.TODO()).Return("", fmt.Errorf("Superheroe with ID %v does not exist", 2))
 		_, err := ctrl.Delete("2", context.TODO())
 
@@ -163,7 +163,7 @@ func TestDelete(t *testing.T) {
 
 	t.Run("should delete a superheroe", func(t *testing.T) {
 		mockRepo := new(mock.Repository)
-		ctrl := controller.NewController(mockRepo)
+		ctrl := controller.NewController(mockRepo, nil)
 		mockRepo.On("DeleteSuperheroe", "1", context.TODO()).Return("Character deleted 1", nil)
 		result, _ := ctrl.Delete("1", context.TODO())
 
@@ -173,7 +173,7 @@ func TestDelete(t *testing.T) {
 
 func BenchmarkByID(b *testing.B) {
 	mockRepo := new(mock.Repository)
-	ctrl := controller.NewController(mockRepo)
+	ctrl := controller.NewController(mockRepo, nil)
 	mockRepo.On("GetSuperheroes", context.TODO()).Return([]*entity.Superhero{&batman})
 
 	for i := 0; i < b.N; i++ {
@@ -183,7 +183,7 @@ func BenchmarkByID(b *testing.B) {
 
 func BenchmarkAdd(b *testing.B) {
 	mockRepo := new(mock.Repository)
-	ctrl := controller.NewController(mockRepo)
+	ctrl := controller.NewController(mockRepo, nil)
 	nh := entity.Superhero{
 		Name:  "Superman",
 		Alias: "The Man Of Steel",
@@ -198,7 +198,7 @@ func BenchmarkAdd(b *testing.B) {
 
 func BenchmarkEdit(b *testing.B) {
 	mockRepo := new(mock.Repository)
-	ctrl := controller.NewController(mockRepo)
+	ctrl := controller.NewController(mockRepo, nil)
 	oid, _ := primitive.ObjectIDFromHex("1")
 	nh := entity.Superhero{
 		ID:    oid,
@@ -215,7 +215,7 @@ func BenchmarkEdit(b *testing.B) {
 
 func BenchmarkDelete(b *testing.B) {
 	mockRepo := new(mock.Repository)
-	ctrl := controller.NewController(mockRepo)
+	ctrl := controller.NewController(mockRepo, nil)
 	mockRepo.On("GetSuperheroes", context.TODO()).Return(sh)
 	mockRepo.On("DeleteSuperheroe", "1").Return("Character deleted 1", nil)
 
