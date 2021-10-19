@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/repository"
 	"superheroe-api/superheroe-golang-api/src/util"
@@ -16,18 +17,33 @@ type Controller interface {
 	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Delete(id string, ctx context.Context) (string, error)
+	GetHttpRequest() (interface{}, error)
 }
 
 type controller struct {
-	repo repository.Repository
+	repo   repository.Repository
+	client client.Client
 }
 
 //NewController initialice a new controller
-func NewController(rep repository.Repository) Controller {
+func NewController(rep repository.Repository, client client.Client) Controller {
 	log.SetFormatter(&log.JSONFormatter{})
 	return &controller{
-		repo: rep,
+		repo:   rep,
+		client: client,
 	}
+}
+
+//GetHttpRequest makes an http get request via client
+func (s *controller) GetHttpRequest() (interface{}, error) {
+	res, err := s.client.Get()
+	if err != nil {
+		log.WithFields(log.Fields{"package": "controller", "method": "GetHttpRequest"}).Error(err.Error())
+		return nil, err
+	}
+	log.WithFields(log.Fields{"package": "controller", "method": "GetHttpRequest"}).Info("ok")
+
+	return res, nil
 }
 
 //GetAll return all superheroes

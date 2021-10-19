@@ -22,6 +22,7 @@ type HTTPServer interface {
 	GetSuperhero(res http.ResponseWriter, req *http.Request)
 	UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 	DeleteSuperhero(res http.ResponseWriter, req *http.Request)
+	GetHttpRequest(res http.ResponseWriter, req *http.Request)
 }
 
 type httpServer struct {
@@ -41,6 +42,18 @@ func NewHTTPServer(ctrl controller.Controller, ctx context.Context) HTTPServer {
 // Health verify if the api is up and running
 func (h *httpServer) Health(res http.ResponseWriter, _ *http.Request) {
 	json.NewEncoder(res).Encode(entity.Message{MSG: "status up"})
+}
+
+// GetHttpRequest provides all the superheroes
+func (h *httpServer) GetHttpRequest(res http.ResponseWriter, _ *http.Request) {
+	httpGetResponse, err := h.ctrl.GetHttpRequest()
+	if err != nil {
+		log.WithFields(log.Fields{"package": "httpServer", "method": "GetHttpRequest"}).Error(err.Error())
+		HandleCustomError(res, err)
+		return
+	}
+	log.WithFields(log.Fields{"package": "httpServer", "method": "GetHttpRequest"}).Info("ok")
+	json.NewEncoder(res).Encode(httpGetResponse)
 }
 
 // GetSuperheroes provides all the superheroes
