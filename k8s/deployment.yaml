@@ -21,6 +21,12 @@ spec:
           envFrom:
             - configMapRef:
                 name: superheroe-golang-api-cfg
+          env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: superheroe-golang-api-secrets
+                  key: API_KEY
           ports:
             - containerPort: 5050
           livenessProbe:
