@@ -3,37 +3,23 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
-	"strings"
 	"superheroe-api/superheroe-golang-api/src/entity"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type tradeMadeStruct struct {
-	currencies string
-	api_key    string
-	url        string
+	url string
 }
 
 //NewTradeMade initialice a new trade made controller
-func NewTradeMade() Client {
-	api_key := os.Getenv("API_KEY")
-	currencies := os.Getenv("CURRENCIES")
-	if len(strings.TrimSpace(currencies)) == 0 {
-		currencies = "EURUSD,GBPUSD"
-	}
-	if len(strings.TrimSpace(api_key)) == 0 {
-		api_key = "12345"
-	}
-
+func NewTradeMade(url string) Client {
 	log.SetFormatter(&log.JSONFormatter{})
 	return &tradeMadeStruct{
-		currencies: currencies,
-		api_key:    api_key,
-		url:        "https://marketdata.tradermade.com/api/v1/live?currency=" + currencies + "&api_key=" + api_key,
+		url: url,
 	}
 }
 
@@ -43,6 +29,14 @@ func (c *tradeMadeStruct) Get() (interface{}, error) {
 	if err != nil {
 		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error(err.Error())
 		return nil, err
+	}
+	if res.StatusCode == 500 {
+		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error("TradeMade client error 500")
+		return nil, fmt.Errorf("TradeMade client error 500")
+	}
+	if res.StatusCode == 404 {
+		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error("TradeMade client error 404")
+		return nil, fmt.Errorf("TradeMade client error 404")
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
