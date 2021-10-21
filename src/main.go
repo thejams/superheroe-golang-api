@@ -24,7 +24,18 @@ func main() {
 	ctx := context.Background()
 	repo, mongoClient := repository.NewMongoConnection(ctx)
 	defer mongoClient.Disconnect(ctx)
-	client := client.NewTradeMade()
+
+	api_key := os.Getenv("API_KEY")
+	currencies := os.Getenv("CURRENCIES")
+	if len(strings.TrimSpace(currencies)) == 0 {
+		currencies = "EURUSD,GBPUSD"
+	}
+	if len(strings.TrimSpace(api_key)) == 0 {
+		api_key = "12345"
+	}
+	url := "https://marketdata.tradermade.com/api/v1/live?currency=" + currencies + "&api_key=" + api_key
+	client := client.NewTradeMade(url)
+
 	ctrl := controller.NewController(repo, client)
 	http_server := httpServer.NewHTTPServer(ctrl, ctx)
 
