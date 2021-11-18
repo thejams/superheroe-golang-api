@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 	"superheroe-api/superheroe-golang-api/src/client"
+	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
@@ -17,24 +16,12 @@ import (
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if len(strings.TrimSpace(port)) == 0 {
-		port = ":5000"
-	}
+	cfg := config.GetAPIConfig()
 	ctx := context.Background()
 	repo, mongoClient := repository.NewMongoConnection(ctx)
 	defer mongoClient.Disconnect(ctx)
 
-	api_key := os.Getenv("API_KEY")
-	currencies := os.Getenv("CURRENCIES")
-	if len(strings.TrimSpace(currencies)) == 0 {
-		currencies = "EURUSD,GBPUSD"
-	}
-	if len(strings.TrimSpace(api_key)) == 0 {
-		api_key = "12345"
-	}
-	url := "https://marketdata.tradermade.com/api/v1/live?currency=" + currencies + "&api_key=" + api_key
-	client := client.NewTradeMade(url)
+	client := client.NewTradeMade(cfg.ClientURI)
 
 	ctrl := controller.NewController(repo, client)
 	http_server := httpServer.NewHTTPServer(ctrl, ctx)
@@ -53,9 +40,9 @@ func main() {
 	methods := handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})
 	origins := handlers.AllowedMethods([]string{"*"})
 
-	fmt.Printf("server runing in port %v", port)
+	fmt.Printf("server runing in port %v", cfg.Port)
 	fmt.Println()
-	log.Fatal(http.ListenAndServe(port, handlers.CORS(credentials, methods, origins)(router)))
+	log.Fatal(http.ListenAndServe(cfg.Port, handlers.CORS(credentials, methods, origins)(router)))
 
 }
 
