@@ -9,6 +9,7 @@ import (
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/util"
 
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -43,6 +44,7 @@ func getDBConnection() (string, string, string, string) {
 
 // NewMongoConnection provides a new mongodb connection
 func NewMongoConnection(ctx context.Context) (Repository, *mongo.Client) {
+	log.SetFormatter(&log.JSONFormatter{})
 	usr, pwd, host, port := getDBConnection()
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s", usr, pwd, host, port)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
@@ -65,13 +67,15 @@ func (r *mongoRepository) GetSuperheroes(ctx context.Context) ([]*entity.Superhe
 	defer cursor.Close(ctx)
 
 	if err != nil {
+		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroes"}).Error(err.Error())
 		return nil, err
 	}
 	if err = cursor.All(ctx, &superheroes); err != nil {
+		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroes"}).Error(err.Error())
 		return nil, err
 	}
-	fmt.Println(superheroes)
 
+	log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroes"}).Info("ok")
 	return superheroes, nil
 }
 
@@ -81,17 +85,21 @@ func (r *mongoRepository) GetSuperheroeById(i string, ctx context.Context) (*ent
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(i)
 	if err != nil {
+		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroeById"}).Error(err.Error())
 		return nil, err
 	}
 
 	filter := bson.M{"_id": oid}
 	err = collection.FindOne(ctx, filter).Decode(&result)
 	if err == mongo.ErrNoDocuments {
+		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroeById"}).Error(err.Error())
 		return nil, &util.NotFoundError{Message: fmt.Sprintf("no superheroe with id %v found", oid)}
 	} else if err != nil {
+		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroeById"}).Error(err.Error())
 		return nil, err
 	}
 
+	log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "GetSuperheroeById"}).Info("ok")
 	return result, nil
 }
 
