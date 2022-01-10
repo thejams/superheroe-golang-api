@@ -6,46 +6,80 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/repository"
 	"superheroe-api/superheroe-golang-api/src/util"
 
 	"github.com/go-playground/validator"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
-type HTTPServer interface {
-	Health(res http.ResponseWriter, _ *http.Request)
-	GetSuperheroes(res http.ResponseWriter, _ *http.Request)
-	AddSuperHero(res http.ResponseWriter, req *http.Request)
-	GetSuperhero(res http.ResponseWriter, req *http.Request)
-	UpdateSuperhero(res http.ResponseWriter, req *http.Request)
-	DeleteSuperhero(res http.ResponseWriter, req *http.Request)
-	GetHttpRequest(res http.ResponseWriter, req *http.Request)
-}
-
-type httpServer struct {
-	ctrl controller.Controller
-	ctx  context.Context
+type HttpServer struct {
+	ctrl        controller.Controller
+	ctx         context.Context
+	Credentials handlers.CORSOption
+	Methods     handlers.CORSOption
+	Origins     handlers.CORSOption
+	Router      *mux.Router
 }
 
 //NewHTTPServer initialice a new http server
-func NewHTTPServer(ctrl controller.Controller, ctx context.Context) HTTPServer {
+func NewHTTPServer(ctx context.Context, cfg *entity.APPConfig, repo repository.Repository) *HttpServer {
 	log.SetFormatter(&log.JSONFormatter{})
-	return &httpServer{
-		ctrl: ctrl,
-		ctx:  ctx,
+	var router = mux.NewRouter().StrictSlash(true)
+	var credentials handlers.CORSOption
+	var methods handlers.CORSOption
+	var origins handlers.CORSOption
+
+	http_server := new(HttpServer)
+
+	{
+		client := client.NewTradeMade(cfg.ClientURI)
+		ctrl := controller.NewController(repo, client)
+
+		http_server.ctrl = ctrl
+		http_server.ctx = ctx
+
+		router.Use(commonMiddleware)
+		router.HandleFunc("/health", http_server.Health)
+		router.HandleFunc("/superhero", http_server.AddSuperHero).Methods("POST")
+		router.HandleFunc("/superhero", http_server.GetSuperheroes).Methods("GET")
+		router.HandleFunc("/superhero/{id}", http_server.GetSuperhero).Methods("GET")
+		router.HandleFunc("/superhero/{id}", http_server.DeleteSuperhero).Methods("DELETE")
+		router.HandleFunc("/superhero/{id}", http_server.UpdateSuperhero).Methods("PUT")
+		router.HandleFunc("/client/get", http_server.GetHttpRequest).Methods("GET")
+
+		credentials = handlers.AllowCredentials()
+		methods = handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})
+		origins = handlers.AllowedMethods([]string{"*"})
+
+		http_server.Credentials = credentials
+		http_server.Methods = methods
+		http_server.Origins = origins
+		http_server.Router = router
 	}
+
+	return http_server
+}
+
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		next.ServeHTTP(w, r)
+	})
 }
 
 // Health verify if the api is up and running
-func (h *httpServer) Health(res http.ResponseWriter, _ *http.Request) {
+func (h *HttpServer) Health(res http.ResponseWriter, _ *http.Request) {
 	json.NewEncoder(res).Encode(entity.Message{MSG: "status up"})
 }
 
 // GetHttpRequest provides all the superheroes
-func (h *httpServer) GetHttpRequest(res http.ResponseWriter, _ *http.Request) {
+func (h *HttpServer) GetHttpRequest(res http.ResponseWriter, _ *http.Request) {
 	httpGetResponse, err := h.ctrl.GetHttpRequest()
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "GetHttpRequest"}).Error(err.Error())
@@ -57,7 +91,7 @@ func (h *httpServer) GetHttpRequest(res http.ResponseWriter, _ *http.Request) {
 }
 
 // GetSuperheroes provides all the superheroes
-func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
+func (h *HttpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
 	superheroList, err := h.ctrl.GetAll(h.ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Error(err.Error())
@@ -69,7 +103,7 @@ func (h *httpServer) GetSuperheroes(res http.ResponseWriter, _ *http.Request) {
 }
 
 // AddSuperHero let us add a new super hero
-func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
+func (h *HttpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
 	var newHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -105,7 +139,7 @@ func (h *httpServer) AddSuperHero(res http.ResponseWriter, req *http.Request) {
 }
 
 // GetSuperhero return a single super hero
-func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
+func (h *HttpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	hero, err := h.ctrl.GetByID(vars["id"], h.ctx)
 
@@ -120,7 +154,7 @@ func (h *httpServer) GetSuperhero(res http.ResponseWriter, req *http.Request) {
 }
 
 // UpdateSuperhero updates a super hero information
-func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request) {
+func (h *HttpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	var updatedHero entity.Superhero
 	reqBody, err := ioutil.ReadAll(req.Body)
@@ -143,7 +177,7 @@ func (h *httpServer) UpdateSuperhero(res http.ResponseWriter, req *http.Request)
 }
 
 // DeleteSuperhero deletes a super hero
-func (h *httpServer) DeleteSuperhero(res http.ResponseWriter, req *http.Request) {
+func (h *HttpServer) DeleteSuperhero(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 
 	resp, err := h.ctrl.Delete(vars["id"], h.ctx)
