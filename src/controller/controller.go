@@ -12,7 +12,7 @@ import (
 
 //Service main interface for the service with the business logic
 type Controller interface {
-	GetAll(ctx context.Context) ([]*entity.Superhero, error)
+	GetAll(ctx context.Context) ([]entity.Superhero, error)
 	GetByID(id string, ctx context.Context) (*entity.Superhero, error)
 	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
 	Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
@@ -47,7 +47,7 @@ func (s *controller) GetHttpRequest() (interface{}, error) {
 }
 
 //GetAll return all superheroes
-func (s *controller) GetAll(ctx context.Context) ([]*entity.Superhero, error) {
+func (s *controller) GetAll(ctx context.Context) ([]entity.Superhero, error) {
 	superheroes, err := s.repo.GetSuperheroes(ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "GetAll"}).Error(err.Error())

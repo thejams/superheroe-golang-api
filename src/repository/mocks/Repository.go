@@ -105,15 +105,15 @@ func (_m *Repository) GetSuperheroeById(id string, ctx context.Context) (*entity
 }
 
 // GetSuperheroes provides a mock function with given fields: ctx
-func (_m *Repository) GetSuperheroes(ctx context.Context) ([]*entity.Superhero, error) {
+func (_m *Repository) GetSuperheroes(ctx context.Context) ([]entity.Superhero, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []*entity.Superhero
-	if rf, ok := ret.Get(0).(func(context.Context) []*entity.Superhero); ok {
+	var r0 []entity.Superhero
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Superhero); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*entity.Superhero)
+			r0 = ret.Get(0).([]entity.Superhero)
 		}
 	}
 

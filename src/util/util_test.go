@@ -40,7 +40,7 @@ func TestVerifySuperheroe(t *testing.T) {
 			Name:  "Thor",
 			Alias: "God of Thunder",
 		}
-		sh := []*entity.Superhero{&thor}
+		sh := []entity.Superhero{thor}
 		err := util.VerifySuperheroe(sh, thor)
 
 		assert.NotNil(t, err)
@@ -48,7 +48,7 @@ func TestVerifySuperheroe(t *testing.T) {
 	})
 
 	t.Run("should not return error when a new heroe is verified", func(t *testing.T) {
-		sh := []*entity.Superhero{&batman}
+		sh := []entity.Superhero{batman}
 		err := util.VerifySuperheroe(sh, superman)
 
 		assert.Nil(t, err)
@@ -84,7 +84,7 @@ func TestSuperheroeExists(t *testing.T) {
 }
 
 func BenchmarkVerifySuperheroe(b *testing.B) {
-	sh := []*entity.Superhero{&batman}
+	sh := []entity.Superhero{batman}
 	for i := 0; i < b.N; i++ {
 		util.VerifySuperheroe(sh, superman)
 	}
