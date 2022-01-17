@@ -3,10 +3,8 @@ package httpServer
 import (
 	"context"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/entity"
-	"superheroe-api/superheroe-golang-api/src/repository"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -23,7 +21,7 @@ type HttpServer struct {
 }
 
 //NewHTTPServer initialice a new http server
-func NewHTTPServer(ctx context.Context, cfg *entity.APPConfig, repo repository.Repository) *HttpServer {
+func NewHTTPServer(ctx context.Context, cfg *entity.APPConfig, ctrl controller.Controller) *HttpServer {
 	log.SetFormatter(&log.JSONFormatter{})
 	var credentials handlers.CORSOption
 	var methods handlers.CORSOption
@@ -33,8 +31,6 @@ func NewHTTPServer(ctx context.Context, cfg *entity.APPConfig, repo repository.R
 	http_server := new(HttpServer)
 
 	{
-		client := client.NewTradeMade(cfg.ClientURI)
-		ctrl := controller.NewController(repo, client)
 
 		http_server.ctrl = ctrl
 		http_server.ctx = ctx
