@@ -17,7 +17,7 @@ import (
 func main() {
 	cfg := config.GetAPIConfig()
 	ctx := context.Background()
-	repo, err := repository.NewMongoConnection(ctx)
+	repo, err := repository.NewMongoConnection(ctx, cfg)
 	if err != nil {
 		panic(err)
 	}

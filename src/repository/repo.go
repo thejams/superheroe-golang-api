@@ -8,9 +8,9 @@ import (
 
 //Repository main interface
 type Repository interface {
-	GetSuperheroes(ctx context.Context) ([]entity.Superhero, error)
-	GetSuperheroeById(id string, ctx context.Context) (*entity.Superhero, error)
-	AddSuperheroe(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
-	EditSuperheroe(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
-	DeleteSuperheroe(id string, ctx context.Context) (string, error)
+	GetAll(ctx context.Context) ([]entity.Character, error)
+	Get(id string, ctx context.Context) (*entity.Character, error)
+	Add(c *entity.Character, ctx context.Context) (*entity.Character, error)
+	Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error)
+	Delete(id string, ctx context.Context) (string, error)
 }

@@ -12,10 +12,10 @@ import (
 
 //Service main interface for the service with the business logic
 type Controller interface {
-	GetAll(ctx context.Context) ([]entity.Superhero, error)
-	GetByID(id string, ctx context.Context) (*entity.Superhero, error)
-	Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
-	Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error)
+	GetAll(ctx context.Context) ([]entity.Character, error)
+	GetByID(id string, ctx context.Context) (*entity.Character, error)
+	Add(c *entity.Character, ctx context.Context) (*entity.Character, error)
+	Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error)
 	Delete(id string, ctx context.Context) (string, error)
 	GetHttpRequest() (interface{}, error)
 }
@@ -47,8 +47,8 @@ func (s *controller) GetHttpRequest() (interface{}, error) {
 }
 
 //GetAll return all superheroes
-func (s *controller) GetAll(ctx context.Context) ([]entity.Superhero, error) {
-	superheroes, err := s.repo.GetSuperheroes(ctx)
+func (s *controller) GetAll(ctx context.Context) ([]entity.Character, error) {
+	superheroes, err := s.repo.GetAll(ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "GetAll"}).Error(err.Error())
 		return nil, err
@@ -59,8 +59,8 @@ func (s *controller) GetAll(ctx context.Context) ([]entity.Superhero, error) {
 }
 
 //GetAll return a single superheroe
-func (s *controller) GetByID(id string, ctx context.Context) (*entity.Superhero, error) {
-	resp, err := s.repo.GetSuperheroeById(id, ctx)
+func (s *controller) GetByID(id string, ctx context.Context) (*entity.Character, error) {
+	resp, err := s.repo.Get(id, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "GetByID"}).Error(err.Error())
 		return nil, err
@@ -71,8 +71,8 @@ func (s *controller) GetByID(id string, ctx context.Context) (*entity.Superhero,
 }
 
 //GetAll add a new superheroe
-func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
-	resp, err := s.repo.GetSuperheroes(ctx)
+func (s *controller) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
+	resp, err := s.repo.GetAll(ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
 		return nil, err
@@ -84,7 +84,7 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 		return nil, &util.BadRequestError{Message: err.Error()}
 	}
 
-	superhero, err := s.repo.AddSuperheroe(c, ctx)
+	superhero, err := s.repo.Add(c, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Add"}).Error(err.Error())
 		return nil, err
@@ -95,8 +95,8 @@ func (s *controller) Add(c *entity.Superhero, ctx context.Context) (*entity.Supe
 }
 
 //Edit a superheroe
-func (s *controller) Edit(id string, c *entity.Superhero, ctx context.Context) (*entity.Superhero, error) {
-	heroe, err := s.repo.EditSuperheroe(id, c, ctx)
+func (s *controller) Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error) {
+	heroe, err := s.repo.Edit(id, c, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Edit"}).Error(err.Error())
 		return nil, err
@@ -108,7 +108,7 @@ func (s *controller) Edit(id string, c *entity.Superhero, ctx context.Context) (
 
 //Delete delete a superheroe
 func (s *controller) Delete(id string, ctx context.Context) (string, error) {
-	response, err := s.repo.DeleteSuperheroe(id, ctx)
+	response, err := s.repo.Delete(id, ctx)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "controller", "method": "Delete"}).Error(err.Error())
 		return "", err
