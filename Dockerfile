@@ -23,5 +23,8 @@ EXPOSE 5000
 # Build proyect
 RUN make mod && make build
 
+# Start Mongo DB
+RUN make mongo_start && RUN mongo_prepare
+
 # Run project
 CMD ["./build/bin/superheroe-golang-api"]
