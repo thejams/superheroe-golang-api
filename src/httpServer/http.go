@@ -3,12 +3,13 @@ package httpServer
 import (
 	"context"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/src/controller"
-	"superheroe-api/superheroe-golang-api/src/entity"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+
+	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 type HttpServer struct {

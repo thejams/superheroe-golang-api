@@ -2,12 +2,13 @@ package controller
 
 import (
 	"context"
+
+	log "github.com/sirupsen/logrus"
+
 	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/repository"
 	"superheroe-api/superheroe-golang-api/src/util"
-
-	log "github.com/sirupsen/logrus"
 )
 
 //Service main interface for the service with the business logic

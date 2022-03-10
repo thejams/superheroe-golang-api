@@ -2,13 +2,13 @@ package util_test
 
 import (
 	"fmt"
-	"superheroe-api/superheroe-golang-api/src/entity"
-	"superheroe-api/superheroe-golang-api/src/util"
-
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
 )
 
 var (

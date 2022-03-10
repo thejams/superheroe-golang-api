@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strings"
+
 	"superheroe-api/superheroe-golang-api/src/entity"
 )
 

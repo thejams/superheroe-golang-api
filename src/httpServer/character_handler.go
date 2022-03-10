@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/src/entity"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+
+	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 // GetSuperheroes provides all the superheroes
@@ -18,6 +19,7 @@ func (h *HttpServer) GetSuperheroes(w http.ResponseWriter, _ *http.Request) {
 		HandleCustomError(w, err)
 		return
 	}
+
 	log.WithFields(log.Fields{"package": "httpServer", "method": "GetSuperheroes"}).Info("ok")
 	json.NewEncoder(w).Encode(superheroList)
 }

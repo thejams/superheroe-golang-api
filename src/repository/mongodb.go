@@ -4,8 +4,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"superheroe-api/superheroe-golang-api/src/entity"
-	"superheroe-api/superheroe-golang-api/src/util"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -14,6 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+
+	"superheroe-api/superheroe-golang-api/src/entity"
+	"superheroe-api/superheroe-golang-api/src/util"
 )
 
 var client *mongo.Client

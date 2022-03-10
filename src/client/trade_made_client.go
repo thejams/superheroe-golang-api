@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"superheroe-api/superheroe-golang-api/src/entity"
 
 	log "github.com/sirupsen/logrus"
+
+	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 type tradeMadeStruct struct {

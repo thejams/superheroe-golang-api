@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/handlers"
+
 	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/controller"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
 	"superheroe-api/superheroe-golang-api/src/repository"
-
-	"github.com/gorilla/handlers"
 )
 
 func main() {

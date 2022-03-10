@@ -3,6 +3,7 @@ package util
 
 import (
 	"errors"
+
 	"superheroe-api/superheroe-golang-api/src/entity"
 )
 

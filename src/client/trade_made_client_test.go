@@ -3,12 +3,13 @@ package client_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"superheroe-api/superheroe-golang-api/src/client"
-	"superheroe-api/superheroe-golang-api/src/client/mocks"
-	"superheroe-api/superheroe-golang-api/src/entity"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"superheroe-api/superheroe-golang-api/src/client"
+	"superheroe-api/superheroe-golang-api/src/client/mocks"
+	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 func Test_client_trade_made(t *testing.T) {

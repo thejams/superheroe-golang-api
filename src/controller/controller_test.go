@@ -3,13 +3,14 @@ package controller_test
 import (
 	"context"
 	"fmt"
-	"superheroe-api/superheroe-golang-api/src/controller"
-	"superheroe-api/superheroe-golang-api/src/entity"
-	mock "superheroe-api/superheroe-golang-api/src/repository/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/entity"
+	mock "superheroe-api/superheroe-golang-api/src/repository/mocks"
 )
 
 var (
