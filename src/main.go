@@ -11,26 +11,27 @@ import (
 	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/controller"
+	"superheroe-api/superheroe-golang-api/src/factory"
 	"superheroe-api/superheroe-golang-api/src/httpServer"
-	"superheroe-api/superheroe-golang-api/src/repository"
 )
 
 func main() {
 	cfg := config.GetAPIConfig()
 	ctx := context.Background()
-	repo, err := repository.NewMongoConnection(ctx, cfg)
+
+	conn := factory.DBFactory(1)
+	if conn == nil {
+		panic("DB engine not found")
+	}
+
+	err := conn.Conn(ctx, cfg)
 	if err != nil {
 		panic(err)
 	}
 
+	defer conn.Close(ctx)
 	client := client.NewTradeMade(cfg.ClientURI)
-	controller := controller.NewController(repo, client)
-	/* defer func() {
-		if err := mongoClient.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}() */
-	defer repository.DisconnectDB(ctx)
+	controller := controller.NewController(conn, client)
 
 	http_server := httpServer.NewHTTPServer(ctx, cfg, controller)
 

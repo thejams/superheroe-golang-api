@@ -8,8 +8,8 @@ type User struct {
 
 // Auth is the sign up response with token information
 type Auth struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    string `json:"expires_in"`
-	TokenType    string `json:"token_type"`
+	AccessToken  string `json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	ExpiresIn    string `json:"expires_in,omitempty"`
+	TokenType    string `json:"token_type,omitempty"`
 }

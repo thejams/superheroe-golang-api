@@ -37,6 +37,34 @@ func (_m *Repository) Add(c *entity.Character, ctx context.Context) (*entity.Cha
 	return r0, r1
 }
 
+// Close provides a mock function with given fields: _a0
+func (_m *Repository) Close(_a0 context.Context) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Conn provides a mock function with given fields: _a0, _a1
+func (_m *Repository) Conn(_a0 context.Context, _a1 *entity.APPConfig) error {
+	ret := _m.Called(_a0, _a1)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.APPConfig) error); ok {
+		r0 = rf(_a0, _a1)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Delete provides a mock function with given fields: id, ctx
 func (_m *Repository) Delete(id string, ctx context.Context) (string, error) {
 	ret := _m.Called(id, ctx)

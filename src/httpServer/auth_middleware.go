@@ -45,10 +45,26 @@ func tokenValidatorMiddleware(next http.Handler) http.Handler {
 
 		// validate that user exists in our "DB"
 		payload, _ := parsedToken.Claims.(jwt.MapClaims)
+
+		if _, ok := payload["user"]; !ok {
+			HandleError(w, "missing user", http.StatusForbidden)
+			return
+		}
+
+		if _, ok := payload["type"]; !ok {
+			HandleError(w, "missing token type", http.StatusForbidden)
+			return
+		}
+
+		if tokenType := payload["type"].(string); strings.ToLower(tokenType) != "refresh" {
+			HandleError(w, "invalid token type", http.StatusForbidden)
+			return
+		}
+
 		usr := payload["user"].(string)
-		_, ok := users[strings.ToLower(usr)]
-		if !ok {
+		if _, ok := users[strings.ToLower(usr)]; !ok {
 			HandleError(w, "invalid user", http.StatusForbidden)
+			return
 		}
 
 		ctx := context.WithValue(r.Context(), "username", strings.ToLower(usr))

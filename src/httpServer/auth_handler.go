@@ -15,6 +15,7 @@ import (
 var users = map[string]string{
 	"batman": "1",
 	"thor":   "2",
+	"spawn":  "3",
 }
 
 // For HMAC signing method, the key can be any []byte. It is recommended to generate
@@ -35,25 +36,34 @@ func (h *HttpServer) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Verify if the user exists in our "db"
-	pwd, ok := users[strings.ToLower(credentials.Username)]
-	if !ok || pwd != credentials.Password {
-		w.WriteHeader(http.StatusUnauthorized)
+	if pwd, ok := users[strings.ToLower(credentials.Username)]; !ok || pwd != credentials.Password {
+		HandleError(w, "invalid client credentials", http.StatusUnauthorized)
 		return
 	}
 
 	exp := time.Now().Add(time.Minute * 1).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user": credentials.Username,
-		"exp":  exp, // expires in 1 minute
-	})
+	p := make(map[string]interface{})
+	p["user"] = credentials.Username
+	p["exp"] = exp
+	p["type"] = "access"
 
+	token := signToken(p)
 	// Sign and get the complete encoded token as a string using the secret
-	tokenString, _ := token.SignedString(jwtKey)
+	accessTokenString, _ := token.SignedString(jwtKey)
+
+	exp = time.Now().Add(time.Minute * 5).Unix()
+	p["user"] = credentials.Username
+	p["exp"] = exp
+	p["type"] = "refresh"
+
+	token = signToken(p)
+	refreshTokenString, _ := token.SignedString(jwtKey)
 
 	json.NewEncoder(w).Encode(entity.Auth{
-		TokenType:   "Bearer",
-		AccessToken: tokenString,
-		ExpiresIn:   strconv.Itoa(int(exp)),
+		TokenType:    "Bearer",
+		AccessToken:  accessTokenString,
+		RefreshToken: refreshTokenString,
+		ExpiresIn:    strconv.Itoa(int(exp)),
 	})
 }
 
@@ -68,11 +78,12 @@ func (h *HttpServer) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	exp := time.Now().Add(time.Minute * 1).Unix()
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user": username,
-		"exp":  exp, // expires in 1 minute
-	})
 
+	p := make(map[string]interface{}) // jwt.MapClaims es = type MapClaims map[string]interface{}
+	p["user"] = username
+	p["exp"] = exp
+
+	jwtToken := signToken(p)
 	tokenString, _ := jwtToken.SignedString(jwtKey)
 
 	json.NewEncoder(w).Encode(entity.Auth{
@@ -80,4 +91,14 @@ func (h *HttpServer) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		AccessToken: tokenString,
 		ExpiresIn:   strconv.Itoa(int(exp)),
 	})
+}
+
+func signToken(payload jwt.MapClaims) *jwt.Token {
+	/*
+		jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"user": credentials.Username,
+			"exp":  exp, // expires in 1 minute
+		})
+	*/
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 }

@@ -9,6 +9,8 @@ import (
 
 //Repository main interface
 type Repository interface {
+	Conn(context.Context, *entity.APPConfig) error
+	Close(context.Context) error
 	GetAll(ctx context.Context) ([]entity.Character, error)
 	Get(id string, ctx context.Context) (*entity.Character, error)
 	Add(c *entity.Character, ctx context.Context) (*entity.Character, error)

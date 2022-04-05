@@ -4,6 +4,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -17,45 +18,59 @@ import (
 	"superheroe-api/superheroe-golang-api/src/util"
 )
 
-var client *mongo.Client
+var (
+	client *mongo.Client
+	once   sync.Once
+)
 
-// mongoRepository main struct for mongodb logic
-type mongoRepository struct {
+// MongoDB main struct for mongodb logic
+type MongoDB struct {
 	db *mongo.Database
 }
 
-// NewMongoConnection provides a new mongodb connection
-func NewMongoConnection(ctx context.Context, cfg *entity.APPConfig) (Repository, error) {
+// Conn provides a new mongodb connection
+func (m *MongoDB) Conn(ctx context.Context, cfg *entity.APPConfig) error {
+	var err error
 	log.SetFormatter(&log.JSONFormatter{})
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", cfg.MONGO_USER, cfg.MONGO_PWD, cfg.MONGO_HOST, cfg.MONGO_PORT, cfg.MONGO_DB)
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	once.Do(func() {
+		uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", cfg.MONGO_USER, cfg.MONGO_PWD, cfg.MONGO_HOST, cfg.MONGO_PORT, cfg.MONGO_DB)
+
+		client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
+		if err != nil {
+			log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Error(err.Error())
+		}
+
+		database := client.Database(cfg.MONGO_DB)
+		cancel_ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+
+		err = client.Ping(cancel_ctx, readpref.Primary())
+		if err != nil {
+			log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Error(err.Error())
+			err = fmt.Errorf("Ping to database failed")
+		}
+
+		m.db = database
+	})
+
 	if err != nil {
-		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Error(err.Error())
-		return nil, err
-	}
-	database := client.Database(cfg.MONGO_DB)
-
-	cancel_ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-
-	err = client.Ping(cancel_ctx, readpref.Primary())
-	if err != nil {
-		log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Error(err.Error())
-		return nil, fmt.Errorf("Ping to database failed")
+		return err
 	}
 
-	return &mongoRepository{db: database}, nil
+	log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Info("MongoDB connected")
+	return nil
 }
 
-func DisconnectDB(ctx context.Context) {
-	if err := client.Disconnect(ctx); err != nil {
+func (m *MongoDB) Close(ctx context.Context) error {
+	/* if err := client.Disconnect(ctx); err != nil {
 		panic(err)
-	}
+	} */
+	return client.Disconnect(ctx)
 }
 
 //GetAll returns all the superheroes in the DB
-func (r *mongoRepository) GetAll(ctx context.Context) ([]entity.Character, error) {
+func (r *MongoDB) GetAll(ctx context.Context) ([]entity.Character, error) {
 	var superheroes []entity.Character
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
@@ -80,7 +95,7 @@ func (r *mongoRepository) GetAll(ctx context.Context) ([]entity.Character, error
 }
 
 //Get returns a single superheroe from the DB
-func (r *mongoRepository) Get(i string, ctx context.Context) (*entity.Character, error) {
+func (r *MongoDB) Get(i string, ctx context.Context) (*entity.Character, error) {
 	var result *entity.Character
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(i)
@@ -107,7 +122,7 @@ func (r *mongoRepository) Get(i string, ctx context.Context) (*entity.Character,
 }
 
 //Add add a new superheroe to the DB
-func (r *mongoRepository) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
+func (r *MongoDB) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
 	collection := r.db.Collection("superheroe")
 	filter := bson.D{{"name", c.Name}, {"alias", c.Alias}}
 
@@ -128,7 +143,7 @@ func (r *mongoRepository) Add(c *entity.Character, ctx context.Context) (*entity
 }
 
 //Delete remove a superheroe from the DB
-func (r *mongoRepository) Delete(id string, ctx context.Context) (string, error) {
+func (r *MongoDB) Delete(id string, ctx context.Context) (string, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": oid}
@@ -152,7 +167,7 @@ func (r *mongoRepository) Delete(id string, ctx context.Context) (string, error)
 }
 
 //Edit updates a superheroe in DB with new information
-func (r *mongoRepository) Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error) {
+func (r *MongoDB) Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
