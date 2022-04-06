@@ -56,10 +56,10 @@ func tokenValidatorMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if tokenType := payload["type"].(string); strings.ToLower(tokenType) != "refresh" {
+		/* if tokenType := payload["type"].(string); strings.ToLower(tokenType) != "refresh" {
 			HandleError(w, "invalid token type", http.StatusForbidden)
 			return
-		}
+		} */
 
 		usr := payload["user"].(string)
 		if _, ok := users[strings.ToLower(usr)]; !ok {

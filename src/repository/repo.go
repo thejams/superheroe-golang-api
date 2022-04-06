@@ -4,12 +4,13 @@ package repository
 import (
 	"context"
 
+	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
 //Repository main interface
 type Repository interface {
-	Conn(context.Context, *entity.APPConfig) error
+	Conn(context.Context, *config.APPConfig) error
 	Close(context.Context) error
 	GetAll(ctx context.Context) ([]entity.Character, error)
 	Get(id string, ctx context.Context) (*entity.Character, error)

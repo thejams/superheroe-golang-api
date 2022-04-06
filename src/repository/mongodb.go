@@ -14,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 
+	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/entity"
 	"superheroe-api/superheroe-golang-api/src/util"
 )
@@ -29,7 +30,7 @@ type MongoDB struct {
 }
 
 // Conn provides a new mongodb connection
-func (m *MongoDB) Conn(ctx context.Context, cfg *entity.APPConfig) error {
+func (m *MongoDB) Conn(ctx context.Context, cfg *config.APPConfig) error {
 	var err error
 	log.SetFormatter(&log.JSONFormatter{})
 

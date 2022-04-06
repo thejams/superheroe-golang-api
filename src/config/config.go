@@ -3,60 +3,82 @@ package config
 import (
 	"os"
 	"strings"
-
-	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
+type APPConfig struct {
+	TradeMadeClientURI string
+	Port               string
+	MONGO_USER         string
+	MONGO_PWD          string
+	MONGO_HOST         string
+	MONGO_PORT         string
+	MONGO_DB           string
+}
+
 //GetAPIConfig returns config struct for the app
-func GetAPIConfig() *entity.APPConfig {
+func GetAPIConfig() *APPConfig {
 	port := os.Getenv("PORT")
-	api_key := os.Getenv("API_KEY")
-	currencies := os.Getenv("CURRENCIES")
-	mongo_usr := os.Getenv("MONGO_USER")
-	mongo_pwd := os.Getenv("MONGO_PWD")
-	mongo_host := os.Getenv("MONGO_HOST")
-	mongo_port := os.Getenv("MONGO_PORT")
-	db := os.Getenv("MONGO_DB")
-
-	if len(strings.TrimSpace(mongo_usr)) == 0 {
-		mongo_usr = "test"
-	}
-
-	if len(strings.TrimSpace(mongo_pwd)) == 0 {
-		mongo_pwd = "12345"
-	}
-
-	if len(strings.TrimSpace(mongo_host)) == 0 {
-		mongo_host = "localhost"
-	}
-
-	if len(strings.TrimSpace(mongo_port)) == 0 {
-		mongo_port = "27017"
-	}
-
-	if len(strings.TrimSpace(db)) == 0 {
-		db = "superheroes"
-	}
 
 	if len(strings.TrimSpace(port)) == 0 {
 		port = ":5000"
 	}
-	if len(strings.TrimSpace(currencies)) == 0 {
-		currencies = "EURUSD,GBPUSD"
+
+	mongoSetting := getMongoConfig()
+
+	return &APPConfig{
+		TradeMadeClientURI: getTradeMadeConfig(),
+		Port:               port,
+		MONGO_USER:         mongoSetting["MONGO_USER"],
+		MONGO_PWD:          mongoSetting["MONGO_PWD"],
+		MONGO_HOST:         mongoSetting["MONGO_HOST"],
+		MONGO_PORT:         mongoSetting["MONGO_PORT"],
+		MONGO_DB:           mongoSetting["MONGO_DB"],
 	}
-	if len(strings.TrimSpace(api_key)) == 0 {
-		api_key = "12345"
+}
+
+// getTradeMadeConfig sets the trade made client settings
+func getTradeMadeConfig() string {
+	trade_made_api_key := os.Getenv("API_KEY")
+	trade_made_currencies := os.Getenv("CURRENCIES")
+
+	if len(strings.TrimSpace(trade_made_currencies)) == 0 {
+		trade_made_currencies = "EURUSD,GBPUSD"
+	}
+	if len(strings.TrimSpace(trade_made_api_key)) == 0 {
+		trade_made_api_key = "12345"
 	}
 
-	url := "https://marketdata.tradermade.com/api/v1/live?currency=" + currencies + "&api_key=" + api_key
+	return "https://marketdata.tradermade.com/api/v1/live?currency=" + trade_made_currencies + "&api_key=" + trade_made_api_key
+}
 
-	return &entity.APPConfig{
-		ClientURI:  url,
-		Port:       port,
-		MONGO_USER: mongo_usr,
-		MONGO_PWD:  mongo_pwd,
-		MONGO_HOST: mongo_host,
-		MONGO_PORT: mongo_port,
-		MONGO_DB:   db,
+// getMongoConfig sets the mongo db settings
+func getMongoConfig() map[string]string {
+	m := make(map[string]string)
+	m["MONGO_USER"] = os.Getenv("MONGO_USER")
+	m["MONGO_PWD"] = os.Getenv("MONGO_PWD")
+	m["MONGO_HOST"] = os.Getenv("MONGO_HOST")
+	m["MONGO_PORT"] = os.Getenv("MONGO_PORT")
+	m["MONGO_DB"] = os.Getenv("MONGO_DB")
+
+	if len(strings.TrimSpace(m["MONGO_USER"])) == 0 {
+		m["MONGO_USER"] = "test"
 	}
+
+	if len(strings.TrimSpace(m["MONGO_PWD"])) == 0 {
+		m["MONGO_PWD"] = "12345"
+	}
+
+	if len(strings.TrimSpace(m["MONGO_HOST"])) == 0 {
+		m["MONGO_HOST"] = "localhost"
+	}
+
+	if len(strings.TrimSpace(m["MONGO_PORT"])) == 0 {
+		m["MONGO_PORT"] = "27017"
+	}
+
+	if len(strings.TrimSpace(m["MONGO_DB"])) == 0 {
+		m["MONGO_DB"] = "superheroes"
+	}
+
+	return m
 }

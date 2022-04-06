@@ -4,6 +4,8 @@ package mocks
 
 import (
 	context "context"
+	config "superheroe-api/superheroe-golang-api/src/config"
+
 	entity "superheroe-api/superheroe-golang-api/src/entity"
 
 	mock "github.com/stretchr/testify/mock"
@@ -52,11 +54,11 @@ func (_m *Repository) Close(_a0 context.Context) error {
 }
 
 // Conn provides a mock function with given fields: _a0, _a1
-func (_m *Repository) Conn(_a0 context.Context, _a1 *entity.APPConfig) error {
+func (_m *Repository) Conn(_a0 context.Context, _a1 *config.APPConfig) error {
 	ret := _m.Called(_a0, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.APPConfig) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *config.APPConfig) error); ok {
 		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Error(0)

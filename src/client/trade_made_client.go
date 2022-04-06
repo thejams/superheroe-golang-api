@@ -6,26 +6,36 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 
+	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
-type tradeMadeStruct struct {
+type TradeMadeClient struct {
 	url string
 }
 
-//NewTradeMade initialice a new trade made controller
-func NewTradeMade(url string) Client {
+var once sync.Once
+
+//InitClient initialice a new trade made controller
+func (c *TradeMadeClient) InitClient(cfg *config.APPConfig) {
 	log.SetFormatter(&log.JSONFormatter{})
-	return &tradeMadeStruct{
-		url: url,
-	}
+
+	once.Do(func() {
+		c.url = cfg.TradeMadeClientURI
+	})
+}
+
+// SetURL sets the client url
+func (c *TradeMadeClient) SetURL(s string) {
+	c.url = s
 }
 
 //Get makes an http get request to the public TradeMade API
-func (c *tradeMadeStruct) Get() (interface{}, error) {
+func (c *TradeMadeClient) Get() (interface{}, error) {
 	res, err := http.Get(c.url)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error(err.Error())
