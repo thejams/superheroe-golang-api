@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/handlers"
 
@@ -39,6 +40,13 @@ func main() {
 	controller := controller.NewController(conn, client)
 	http_server := httpServer.NewHTTPServer(ctx, controller)
 
+	srv := &http.Server{
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		Addr:         cfg.Port,
+		Handler:      handlers.CORS(http_server.Credentials, http_server.Methods, http_server.Origins)(http_server.Router),
+	}
+
 	fmt.Printf("server runing in port %v \n", cfg.Port)
-	log.Fatal(http.ListenAndServe(cfg.Port, handlers.CORS(http_server.Credentials, http_server.Methods, http_server.Origins)(http_server.Router)))
+	log.Fatal(srv.ListenAndServe())
 }

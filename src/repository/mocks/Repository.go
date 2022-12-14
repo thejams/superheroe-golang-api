@@ -18,52 +18,45 @@ type Repository struct {
 
 // Add provides a mock function with given fields: c, ctx
 func (_m *Repository) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
+	/*
+		args := mock.Called()
+		result := args.Get(0)
+		return result.([]entity.Post), args.Error(1)
+
+		args := mock.Called()
+		result := args.Get(0)
+		return result.(*entity.Post), args.Error(1)
+	*/
 	ret := _m.Called(c, ctx)
 
 	var r0 *entity.Character
-	if rf, ok := ret.Get(0).(func(*entity.Character, context.Context) *entity.Character); ok {
-		r0 = rf(c, ctx)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Character)
-		}
-	}
-
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*entity.Character, context.Context) error); ok {
-		r1 = rf(c, ctx)
-	} else {
-		r1 = ret.Error(1)
+	
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(*entity.Character)
 	}
+	
+	r1 = ret.Error(1)
+	
 
 	return r0, r1
 }
 
 // Close provides a mock function with given fields: _a0
 func (_m *Repository) Close(_a0 context.Context) error {
+	var r0 error
 	ret := _m.Called(_a0)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context) error); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Error(0)
-	}
-
+	r0 = ret.Error(0)
 	return r0
 }
 
 // Conn provides a mock function with given fields: _a0, _a1
 func (_m *Repository) Conn(_a0 context.Context, _a1 *config.APPConfig) error {
+	var r0 error
 	ret := _m.Called(_a0, _a1)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *config.APPConfig) error); ok {
-		r0 = rf(_a0, _a1)
-	} else {
-		r0 = ret.Error(0)
-	}
-
+	r0 = ret.Error(0)
 	return r0
 }
 
@@ -72,18 +65,10 @@ func (_m *Repository) Delete(id string, ctx context.Context) (string, error) {
 	ret := _m.Called(id, ctx)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(string, context.Context) string); ok {
-		r0 = rf(id, ctx)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
+	r0 = ret.Get(0).(string)
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, context.Context) error); ok {
-		r1 = rf(id, ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
+	r1 = ret.Error(1)
 
 	return r0, r1
 }
@@ -93,21 +78,13 @@ func (_m *Repository) Edit(id string, c *entity.Character, ctx context.Context) 
 	ret := _m.Called(id, c, ctx)
 
 	var r0 *entity.Character
-	if rf, ok := ret.Get(0).(func(string, *entity.Character, context.Context) *entity.Character); ok {
-		r0 = rf(id, c, ctx)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Character)
-		}
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(*entity.Character)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *entity.Character, context.Context) error); ok {
-		r1 = rf(id, c, ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
-
+	r1 = ret.Error(1)
+	
 	return r0, r1
 }
 
@@ -116,20 +93,12 @@ func (_m *Repository) Get(id string, ctx context.Context) (*entity.Character, er
 	ret := _m.Called(id, ctx)
 
 	var r0 *entity.Character
-	if rf, ok := ret.Get(0).(func(string, context.Context) *entity.Character); ok {
-		r0 = rf(id, ctx)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Character)
-		}
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).(*entity.Character)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, context.Context) error); ok {
-		r1 = rf(id, ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
+	r1 = ret.Error(1)
 
 	return r0, r1
 }
@@ -139,20 +108,12 @@ func (_m *Repository) GetAll(ctx context.Context) ([]entity.Character, error) {
 	ret := _m.Called(ctx)
 
 	var r0 []entity.Character
-	if rf, ok := ret.Get(0).(func(context.Context) []entity.Character); ok {
-		r0 = rf(ctx)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.Character)
-		}
+	if ret.Get(0) != nil {
+		r0 = ret.Get(0).([]entity.Character)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
+	r1 = ret.Error(1)
 
 	return r0, r1
 }

@@ -32,7 +32,7 @@ func NewHTTPServer(ctx context.Context, ctrl *controller.Controller) *HttpServer
 
 		credentials := handlers.AllowCredentials()
 		methods := handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"})
-		origins := handlers.AllowedMethods([]string{"*"})
+		origins := handlers.AllowedOrigins([]string{"*"})
 
 		http_server.Credentials = credentials
 		http_server.Methods = methods
