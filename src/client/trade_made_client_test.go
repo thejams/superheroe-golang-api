@@ -10,7 +10,6 @@ import (
 	"superheroe-api/superheroe-golang-api/src/client"
 	"superheroe-api/superheroe-golang-api/src/client/mocks"
 	"superheroe-api/superheroe-golang-api/src/entity"
-	"superheroe-api/superheroe-golang-api/src/factory"
 )
 
 func Test_client_trade_made(t *testing.T) {
@@ -22,10 +21,8 @@ func Test_client_trade_made(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := factory.ClientFactory(1).(*client.TradeMadeClient)
-		client.SetURL(server.URL)
-		res, err := client.Get()
-
+		tradeMadeClient := client.NewTradeMadeClient(server.URL)
+		res, err := tradeMadeClient.Get()
 		tradeMadeObj, ok := res.(entity.TradeMade)
 
 		assert.Nil(t, err)
@@ -42,9 +39,9 @@ func Test_client_trade_made(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := factory.ClientFactory(1).(*client.TradeMadeClient)
-		client.SetURL(server.URL)
-		_, err := client.Get()
+		tradeMadeClient := client.NewTradeMadeClient(server.URL)
+		_, err := tradeMadeClient.Get()
+
 		assert.NotNil(t, err)
 	})
 
@@ -56,9 +53,9 @@ func Test_client_trade_made(t *testing.T) {
 		}))
 		defer server.Close()
 
-		client := factory.ClientFactory(1).(*client.TradeMadeClient)
-		client.SetURL(server.URL)
-		_, err := client.Get()
+		tradeMadeClient := client.NewTradeMadeClient(server.URL)
+
+		_, err := tradeMadeClient.Get()
 		assert.NotNil(t, err)
 	})
 }

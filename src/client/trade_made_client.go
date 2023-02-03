@@ -7,36 +7,49 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sync"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
-	"superheroe-api/superheroe-golang-api/src/config"
 	"superheroe-api/superheroe-golang-api/src/entity"
 )
 
-type TradeMadeClient struct {
-	url string
+type tradeMadeClient struct {
+	url    string
+	client http.Client
 }
 
 var once sync.Once
 
-//InitClient initialice a new trade made controller
-func (c *TradeMadeClient) InitClient(cfg *config.APPConfig) {
+// NewTradeMadeClient returns a new trade made client
+func NewTradeMadeClient(uri string) Client {
 	log.SetFormatter(&log.JSONFormatter{})
 
+	c := &tradeMadeClient{}
+
 	once.Do(func() {
-		c.url = cfg.TradeMadeClientURI
+		c.url = uri //cfg.TradeMadeClientURI
+		c.client = http.Client{
+			Timeout: 5 * time.Second,
+		}
 	})
+	return c
 }
 
 // SetURL sets the client url
-func (c *TradeMadeClient) SetURL(s string) {
+func (c *tradeMadeClient) SetURL(s string) {
 	c.url = s
 }
 
 //Get makes an http get request to the public TradeMade API
-func (c *TradeMadeClient) Get() (interface{}, error) {
-	res, err := http.Get(c.url)
+func (c *tradeMadeClient) Get() (interface{}, error) {
+	req, err := http.NewRequest(http.MethodGet, c.url, nil)
+	if err != nil {
+		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error(err.Error())
+		return nil, err
+	}
+
+	res, err := c.client.Do(req)
 	if err != nil {
 		log.WithFields(log.Fields{"package": "client", "client": "TradeMade", "method": "Get"}).Error(err.Error())
 		return nil, err

@@ -20,29 +20,34 @@ import (
 )
 
 var (
-	client *mongo.Client
-	once   sync.Once
+	once sync.Once
 )
 
-// MongoDB main struct for mongodb logic
-type MongoDB struct {
+// mongoDB main struct for mongodb logic
+type mongoDB struct {
 	db *mongo.Database
 }
 
+// NewMongoDB returns a mongodb struct
+func NewMongoDB() *mongoDB {
+	return &mongoDB{}
+}
+
 // Conn provides a new mongodb connection
-func (m *MongoDB) Conn(ctx context.Context, cfg *config.APPConfig) error {
+func (m *mongoDB) Conn(ctx context.Context, cfg *config.APPConfig) error {
 	var err error
 	log.SetFormatter(&log.JSONFormatter{})
 
 	once.Do(func() {
 		uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", cfg.MONGO_USER, cfg.MONGO_PWD, cfg.MONGO_HOST, cfg.MONGO_PORT, cfg.MONGO_DB)
 
-		client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
+		client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 		if err != nil {
 			log.WithFields(log.Fields{"package": "repository", "client": "MongoDB", "method": "NewMongoConnection"}).Error(err.Error())
 		}
 
 		database := client.Database(cfg.MONGO_DB)
+
 		cancel_ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
 
@@ -63,15 +68,15 @@ func (m *MongoDB) Conn(ctx context.Context, cfg *config.APPConfig) error {
 	return nil
 }
 
-func (m *MongoDB) Close(ctx context.Context) error {
+func (m *mongoDB) Close(ctx context.Context) error {
 	/* if err := client.Disconnect(ctx); err != nil {
 		panic(err)
 	} */
-	return client.Disconnect(ctx)
+	return m.db.Client().Disconnect(ctx)
 }
 
 //GetAll returns all the superheroes in the DB
-func (r *MongoDB) GetAll(ctx context.Context) ([]entity.Character, error) {
+func (r *mongoDB) GetAll(ctx context.Context) ([]entity.Character, error) {
 	var superheroes []entity.Character
 	collection := r.db.Collection("superheroe")
 	filter := bson.M{}
@@ -96,7 +101,7 @@ func (r *MongoDB) GetAll(ctx context.Context) ([]entity.Character, error) {
 }
 
 //Get returns a single superheroe from the DB
-func (r *MongoDB) Get(i string, ctx context.Context) (*entity.Character, error) {
+func (r *mongoDB) Get(i string, ctx context.Context) (*entity.Character, error) {
 	var result *entity.Character
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(i)
@@ -123,7 +128,7 @@ func (r *MongoDB) Get(i string, ctx context.Context) (*entity.Character, error) 
 }
 
 //Add add a new superheroe to the DB
-func (r *MongoDB) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
+func (r *mongoDB) Add(c *entity.Character, ctx context.Context) (*entity.Character, error) {
 	collection := r.db.Collection("superheroe")
 	filter := bson.D{{"name", c.Name}, {"alias", c.Alias}}
 
@@ -144,7 +149,7 @@ func (r *MongoDB) Add(c *entity.Character, ctx context.Context) (*entity.Charact
 }
 
 //Delete remove a superheroe from the DB
-func (r *MongoDB) Delete(id string, ctx context.Context) (string, error) {
+func (r *mongoDB) Delete(id string, ctx context.Context) (string, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": oid}
@@ -168,7 +173,7 @@ func (r *MongoDB) Delete(id string, ctx context.Context) (string, error) {
 }
 
 //Edit updates a superheroe in DB with new information
-func (r *MongoDB) Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error) {
+func (r *mongoDB) Edit(id string, c *entity.Character, ctx context.Context) (*entity.Character, error) {
 	collection := r.db.Collection("superheroe")
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
